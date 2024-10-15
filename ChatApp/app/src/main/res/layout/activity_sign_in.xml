@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            android:background="@color/input_background"
+            android:background="@drawable/background_input"
             android:hint="@string/email"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -59,6 +59,7 @@
             android:paddingEnd="@dimen/_16sdp"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_13ssp"
+
             />
 
         <EditText
@@ -66,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_15sdp"
-            android:background="@color/input_background"
+            android:background="@drawable/background_input"
             android:hint="@string/password"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
@@ -76,6 +77,7 @@
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_13ssp"
             />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonSignIn"
             android:layout_width="match_parent"
@@ -101,7 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_30sdp"
-            android:text="Forgot password?"
+            android:text="@string/forgot_password"
             android:textColor="@color/primary"
             android:textStyle="bold"
             android:textSize="@dimen/_13ssp"
