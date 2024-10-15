@@ -9,6 +9,9 @@ import android.widget.Toast;
 import com.example.chatapp.databinding.ActivitySignInBinding;
 import com.google.firebase.FirebaseApp;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
+
 public class SignInActivity extends Activity {
 
     private ActivitySignInBinding binding;
@@ -21,6 +24,7 @@ public class SignInActivity extends Activity {
         setContentView(binding.getRoot());
         setListeners();
     }
+
 
     private void setListeners(){
         binding.textCreateNewAccount.setOnClickListener(v ->

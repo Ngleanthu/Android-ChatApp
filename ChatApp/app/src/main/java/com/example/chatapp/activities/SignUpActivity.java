@@ -3,6 +3,7 @@ package com.example.chatapp.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
@@ -15,9 +16,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 
 
+
 public class SignUpActivity extends Activity {
 
     private ActivitySignUpBinding binding;
+
     private PreferenceManager preferenceManager;
 
     @Override
@@ -25,6 +28,7 @@ public class SignUpActivity extends Activity {
         super.onCreate(savedInstanceState);
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         preferenceManager = new PreferenceManager(getApplicationContext());
         setListeners();
     }
@@ -106,5 +110,6 @@ public class SignUpActivity extends Activity {
             binding.progressBar.setVisibility(View.INVISIBLE);
             binding.buttonSignUp.setVisibility(View.VISIBLE);
         }
+
     }
 }
