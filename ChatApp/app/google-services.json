@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1014893666889",
-    "project_id": "chatapplication-2f2fe",
-    "storage_bucket": "chatapplication-2f2fe.appspot.com"
+    "project_number": "1018490158334",
+    "project_id": "chatapp-hcmus",
+    "storage_bucket": "chatapp-hcmus.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1014893666889:android:0dccaad134b10592275598",
+        "mobilesdk_app_id": "1:1018490158334:android:7d4cfd3b7803d2ff0c39af",
         "android_client_info": {
           "package_name": "com.example.chatapp"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCJYdTi8P84hpQZAzDks-2R74bTfiEatvk"
+          "current_key": "AIzaSyBcOVfjFBWiMynrE1CIi02ODRPoWiu5Rdc"
         }
       ],
       "services": {

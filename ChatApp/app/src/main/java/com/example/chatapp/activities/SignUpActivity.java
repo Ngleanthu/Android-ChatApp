@@ -1,21 +1,20 @@
 package com.example.chatapp.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
+import com.example.chatapp.databinding.ActivitySignUpBinding;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+public class SignUpActivity extends Activity {
 
-import com.example.chatapp.R;
-
-public class SignUpActivity extends AppCompatActivity {
-
+    private ActivitySignUpBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
-
+        binding = ActivitySignUpBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setListeners();
+    }
+    private void setListeners(){
+        binding.textSignIn.setOnClickListener(v -> onBackPressed());
     }
 }
