@@ -15,13 +15,13 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical">
+
         <ImageView
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="@dimen/_30sdp"
             android:contentDescription="chat_icon"
-            android:src="@drawable/ic_chat" />
-
+            android:src="@drawable/ic_launcher_foreground" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -50,9 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_20sdp"
-
             android:background="@drawable/background_input"
-
             android:hint="@string/email"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -69,7 +67,6 @@
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_15sdp"
             android:background="@drawable/background_input"
-
             android:hint="@string/password"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
@@ -91,10 +88,9 @@
             android:textStyle="bold"
             app:cornerRadius="@dimen/_10sdp"/>
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonCreateNewAccount"
+            android:id="@+id/textCreateNewAccount"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
-
             android:text="Create New Account"
             android:textColor="@color/white"
             android:textSize="@dimen/_13ssp"
@@ -105,9 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_30sdp"
-
             android:text="@string/forgot_password"
-
             android:textColor="@color/primary"
             android:textStyle="bold"
             android:textSize="@dimen/_13ssp"

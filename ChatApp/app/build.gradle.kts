@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.google.gms.google.services)
+//    alias(libs.plugins.google.gms.google.services)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -13,7 +14,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
+        multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -42,6 +43,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -52,4 +54,13 @@ dependencies {
 
     //Rounded ImageView
     implementation("com.makeramen:roundedimageview:2.3.0")
+
+    implementation("androidx.multidex:multidex:2.0.1")
+
+    implementation("com.google.firebase:firebase-firestore:25.1.0")
+    implementation("com.google.firebase:firebase-messaging:24.0.2")
+    implementation(platform("com.google.firebase:firebase-bom:32.2.0")) // Sử dụng Firebase BoM
+    implementation("com.google.firebase:firebase-messaging") // Thư viện FCM
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.0") // Phiên bản mới nhất
+
 }

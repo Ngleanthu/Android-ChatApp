@@ -1,7 +1,9 @@
-package com.example.chatapp;
+package com.example.chatapp.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.example.chatapp.R;
 
 
 public class MainActivity extends Activity {
