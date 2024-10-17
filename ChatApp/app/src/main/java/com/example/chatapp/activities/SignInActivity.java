@@ -3,7 +3,6 @@ package com.example.chatapp.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
@@ -11,28 +10,30 @@ import android.widget.Toast;
 import com.example.chatapp.databinding.ActivitySignInBinding;
 import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.PreferenceManager;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 
 public class SignInActivity extends Activity {
 
     private ActivitySignInBinding binding;
     private PreferenceManager preferenceManager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferenceManager = new PreferenceManager(getApplicationContext());
-//        if(preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
-//            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-//            startActivity(intent);
-//            finish();
-//        }
+        if(preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
         binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setListeners();
     }
+
 
     private void setListeners() {
         binding.textCreateNewAccount.setOnClickListener(v ->
@@ -43,6 +44,7 @@ public class SignInActivity extends Activity {
             }
         });
     }
+
 
     private void signIn(){
         loading(true);
@@ -68,6 +70,8 @@ public class SignInActivity extends Activity {
                     }
                 });
     }
+
+
     private void loading(Boolean isLoading){
         if(isLoading){
             binding.buttonSignIn.setVisibility(View.INVISIBLE);
@@ -78,9 +82,12 @@ public class SignInActivity extends Activity {
             binding.buttonSignIn.setVisibility(View.VISIBLE);
         }
     }
+
+
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
+
 
     private Boolean isValidSignInDetails() {
         if (binding.inputEmail.getText().toString().trim().isEmpty()) {
@@ -95,6 +102,5 @@ public class SignInActivity extends Activity {
         } else {
             return true;
         }
-
     }
 }
