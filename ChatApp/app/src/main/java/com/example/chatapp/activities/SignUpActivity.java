@@ -12,7 +12,10 @@ import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 
 
 public class SignUpActivity extends Activity {
@@ -48,6 +51,7 @@ public class SignUpActivity extends Activity {
         user.put(Constants.KEY_NAME, binding.inputName.getText().toString());
         user.put(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
         user.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
+        user.put(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());
         database.collection(Constants.KEY_COLLECTION_USERS)
                 .add(user)
                 .addOnSuccessListener(documentReference -> {
@@ -55,6 +59,7 @@ public class SignUpActivity extends Activity {
                     preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
                     preferenceManager.putString(Constants.KEY_USER_ID, documentReference.getId());
                     preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
+                    preferenceManager.putString(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
@@ -64,17 +69,31 @@ public class SignUpActivity extends Activity {
                     showToast(exception.getMessage());
                 });
     }
+    private boolean isValidBirthdate(String birthdate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(birthdate);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
     private Boolean isValidSignUpDetails(){
         if(binding.inputName.getText().toString().trim().isEmpty()){
             showToast("Enter name");
             return false;
         }
-        else if(binding.inputEmail.getText().toString().trim().isEmpty()){
-            showToast("Enter email");
-            return false;
-        }
         else if(binding.inputBirthdate.getText().toString().trim().isEmpty()){
             showToast("Enter birthdate");
+            return false;
+        }
+        else if(!isValidBirthdate(binding.inputBirthdate.getText().toString())){
+            showToast("Enter valid birthdate in format dd/MM/yyyy");
+            return false;
+        }
+        else if(binding.inputEmail.getText().toString().trim().isEmpty()){
+            showToast("Enter email");
             return false;
         }
         else if(!Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()){
@@ -97,6 +116,7 @@ public class SignUpActivity extends Activity {
             return true;
         }
     }
+
     private void loading(Boolean isLoading){
         if(isLoading) {
             binding.buttonSignUp.setVisibility(View.INVISIBLE);
