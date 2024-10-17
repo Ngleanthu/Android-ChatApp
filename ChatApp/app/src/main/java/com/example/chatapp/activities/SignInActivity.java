@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
@@ -16,30 +15,24 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-
 public class SignInActivity extends Activity {
 
     private ActivitySignInBinding binding;
-
     private PreferenceManager preferenceManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         preferenceManager = new PreferenceManager(getApplicationContext());
 //        if(preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
 //            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
 //            startActivity(intent);
 //            finish();
 //        }
-
         binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setListeners();
     }
-
 
     private void setListeners() {
         binding.textCreateNewAccount.setOnClickListener(v ->
@@ -103,10 +96,5 @@ public class SignInActivity extends Activity {
             return true;
         }
 
-
-    private void setListeners(){
-        binding.textCreateNewAccount.setOnClickListener(v ->
-                startActivity(new Intent(getApplicationContext(), SignUpActivity.class)));
     }
-
 }
