@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.chatapp.databinding.ActivityMainBinding;
 import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.PreferenceManager;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,6 +22,7 @@ public class MainActivity extends Activity {
     private PreferenceManager preferenceManager;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +30,7 @@ public class MainActivity extends Activity {
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
         loadUserDetails();
+
         getToken();
         setListeners();
     }
@@ -77,5 +80,6 @@ public class MainActivity extends Activity {
             startActivity(new Intent(getApplicationContext(), SignInActivity.class));
             finish();
         }).addOnFailureListener(e -> showToast("Unable to sign out"));
+
     }
 }
