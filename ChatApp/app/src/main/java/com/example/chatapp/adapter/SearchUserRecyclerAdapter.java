@@ -1,6 +1,7 @@
 package com.example.chatapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapp.R;
+import com.example.chatapp.activities.ChatActivity;
+import com.example.chatapp.models.UserModel;
+import com.example.chatapp.utils.AndroidUtil;
+import com.example.chatapp.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -24,8 +29,17 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
 }
 @Override
     protected void onBindViewHolder(@NonNull UserModelViewHolder holder, int position, @NonNull UserModel model) {
-    holder.usernameText.setText(model.getUsername());
-    holder.phoneText.setText(model.getPhone());
+    holder.usernameText.setText(model.getName());
+    holder.phoneText.setText(model.getEmail());
+//    if(model.getUserId().equals(FirebaseUtil.getInstance().getUid())){
+//
+//    }) //Xử lí trường hợp search tên chính mình thì thêm chữ "me" 1:50:38
+    holder.itemView.setOnClickListener(v->{
+        Intent intent = new Intent(context, ChatActivity.class);
+        AndroidUtil.passUserModelAsIntent(intent,model);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    });
 
 }
 
@@ -39,7 +53,7 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
     class UserModelViewHolder extends RecyclerView.ViewHolder {
         TextView usernameText;
         TextView phoneText;
-ImageView profilePic;
+        ImageView profilePic;
         UserModelViewHolder(@NonNull View itemView) {
     super(itemView);
     usernameText = itemView.findViewById(R.id.user_name_text);

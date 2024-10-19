@@ -64,6 +64,8 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging:24.0.2")
     implementation(platform("com.google.firebase:firebase-bom:32.2.0")) // Sử dụng Firebase BoM
     implementation("com.google.firebase:firebase-messaging") // Thư viện FCM
-    implementation("com.google.firebase:firebase-firestore-ktx:25.1.0") // Phiên bản mới nhất
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.0")
+    implementation("com.google.firebase:firebase-auth:21.0.6")
+// Phiên bản mới nhất
 
 }

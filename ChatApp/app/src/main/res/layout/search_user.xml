@@ -5,12 +5,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.SearchUserActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/cardview_dark_background"
+        android:paddingVertical="10dp"
+        android:background="@color/primary"
       android:id="@+id/toolbar"  >
 
         <TextView
@@ -39,14 +40,22 @@
     android:layout_below="@+id/toolbar"
     android:id="@+id/search_user_layout">
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:hint="Username"
-        android:padding="10dp"
-        android:elevation="4dp"
-        android:layout_toLeftOf="@id/search_user_btn"
         android:id="@+id/search_username_input"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_45sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@drawable/background_input"
+        android:hint="Search"
+        android:imeOptions="actionNext"
+        android:importantForAutofill="no"
+        android:inputType="textEmailAddress"
+        android:paddingStart="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_16sdp"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/_13ssp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_toLeftOf="@id/search_user_btn"
+
         />
     <ImageButton
         android:layout_width="wrap_content"
