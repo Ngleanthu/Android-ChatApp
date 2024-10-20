@@ -76,8 +76,4 @@
             android:src="@drawable/ic_add"
             app:tint="@color/white"/>
     </FrameLayout>
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
