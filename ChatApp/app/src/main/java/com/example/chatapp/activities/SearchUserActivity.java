@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -50,19 +49,16 @@ public class SearchUserActivity extends AppCompatActivity {
         });
     }
     void setupSearchRecylerView(String searchTerm) {
-        Log.d("SearchUser", "Searching for: " + searchTerm);
 
         Query query = FirebaseUtil.allUserCollectionReference()
-                .orderBy("name")  // Tìm kiếm theo trường 'name'
+                .orderBy("name")
                 .startAt(searchTerm)
                 .endAt(searchTerm + "\uf8ff");
 
-        // Kiểm tra query trả về kết quả gì
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
             if (!queryDocumentSnapshots.isEmpty()) {
-                // Nếu có kết quả
                 for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
-                    // Lấy từng tài liệu và log nó ra
+
                     UserModel user = documentSnapshot.toObject(UserModel.class);
                     if (user != null) {
                         Log.d("SearchUser", "Found user: " + user.getName() + " with email: " + user.getEmail());
@@ -76,7 +72,6 @@ public class SearchUserActivity extends AppCompatActivity {
             Log.e("SearchUser", "Error fetching search results", e);
         });
 
-        // Tiếp tục khởi tạo RecyclerView Adapter như bình thường
         FirestoreRecyclerOptions<UserModel> options = new FirestoreRecyclerOptions.Builder<UserModel>()
                 .setQuery(query, UserModel.class).build();
 

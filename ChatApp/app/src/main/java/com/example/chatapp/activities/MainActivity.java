@@ -36,11 +36,6 @@ public class MainActivity extends Activity {
     }
 
 
-    private void setListeners(){
-        binding.imageSignOut.setOnClickListener(x->signOut());
-    }
-
-
     private void loadUserDetails(){
         binding.textName.setText(preferenceManager.getString(Constants.KEY_NAME));
     }
@@ -81,5 +76,13 @@ public class MainActivity extends Activity {
             finish();
         }).addOnFailureListener(e -> showToast("Unable to sign out"));
 
+    }
+    private void setListeners(){
+        binding.imageSignOut.setOnClickListener(x -> signOut());
+        binding.tabNewChat.setOnClickListener(v -> {
+            // Chuyển hướng sang trang SearchActivity
+            Intent intent = new Intent(MainActivity.this, SearchUserActivity.class);
+            startActivity(intent);
+        });
     }
 }
