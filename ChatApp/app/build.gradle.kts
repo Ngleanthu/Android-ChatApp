@@ -66,4 +66,5 @@ dependencies {
 
 }
 
+
 // Apply the Google Services plugin automatically (no need for apply plugin in Kotlin Script)

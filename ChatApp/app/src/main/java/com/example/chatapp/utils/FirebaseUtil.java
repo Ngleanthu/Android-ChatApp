@@ -106,4 +106,5 @@ public class FirebaseUtil {
     public interface UserIdCallback {
         void onCallback(String userId);
     }
+
 }

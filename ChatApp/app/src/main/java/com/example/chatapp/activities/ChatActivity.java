@@ -32,11 +32,13 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Arrays;
 import java.util.List;
+
 public class ChatActivity extends AppCompatActivity {
     UserModel otherUser;
     String chatroomId;
     ChatRoomModel chatRoomModel;
     String currentUserId; // Thêm biến lưu currentUserId
+
 
     EditText messageInput;
     ImageButton sendMessageBtn;
@@ -44,6 +46,7 @@ public class ChatActivity extends AppCompatActivity {
     TextView otherUsername;
     RecyclerView recyclerView;
     ChatRecyclerAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +71,7 @@ public class ChatActivity extends AppCompatActivity {
                 }
             });
         });
+
 
         messageInput = findViewById(R.id.chat_message_input);
         sendMessageBtn = findViewById(R.id.message_send_button);
@@ -128,6 +132,7 @@ void setupChatRecyclerView(){
                 if (chatRoomModel == null) {
                     List<String> userIds = Arrays.asList(currentUserId, otherUser.getUserId());
                     chatRoomModel = new ChatRoomModel(chatroomId, userIds, Timestamp.now(), "");
+
                     FirebaseUtil.getChatroomReference(chatroomId).set(chatRoomModel);
                 }
             }

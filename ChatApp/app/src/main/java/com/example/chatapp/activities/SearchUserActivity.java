@@ -58,6 +58,7 @@ public class SearchUserActivity extends AppCompatActivity {
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
             if (!queryDocumentSnapshots.isEmpty()) {
                 for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+
                     UserModel user = documentSnapshot.toObject(UserModel.class);
                     if (user != null) {
                         Log.d("SearchUser", "Found user: " + user.getName() + " with email: " + user.getEmail());
@@ -70,6 +71,7 @@ public class SearchUserActivity extends AppCompatActivity {
             // Xử lý lỗi nếu có
             Log.e("SearchUser", "Error fetching search results", e);
         });
+
         FirestoreRecyclerOptions<UserModel> options = new FirestoreRecyclerOptions.Builder<UserModel>()
                 .setQuery(query, UserModel.class).build();
 
