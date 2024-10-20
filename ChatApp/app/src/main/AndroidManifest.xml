@@ -33,7 +33,8 @@ xmlns:tools="http://schemas.android.com/tools">
     <activity
         android:name=".activities.MainActivity" />
     <activity android:name=".activities.SearchUserActivity" />
-    <activity android:name=".activities.ChatActivity"/>
+    <activity android:name=".activities.ChatActivity"   />
+
     <service
         android:name=".firebase.MessagingService"
         android:exported="false">

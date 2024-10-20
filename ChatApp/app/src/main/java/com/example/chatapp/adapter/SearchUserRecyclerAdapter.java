@@ -24,24 +24,23 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
     Context context;
 
     public SearchUserRecyclerAdapter(@NonNull FirestoreRecyclerOptions<UserModel> options, Context context){
-    super(options);
-    this.context=context;
-}
-@Override
+        super(options);
+        this.context=context;
+    }
+    @Override
     protected void onBindViewHolder(@NonNull UserModelViewHolder holder, int position, @NonNull UserModel model) {
-    holder.usernameText.setText(model.getName());
-    holder.phoneText.setText(model.getEmail());
-//    if(model.getUserId().equals(FirebaseUtil.getInstance().getUid())){
-//
-//    }) //Xử lí trường hợp search tên chính mình thì thêm chữ "me" 1:50:38
-    holder.itemView.setOnClickListener(v->{
-        Intent intent = new Intent(context, ChatActivity.class);
-        AndroidUtil.passUserModelAsIntent(intent,model);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
-    });
+        holder.usernameText.setText(model.getName());
+        holder.phoneText.setText(model.getEmail());
 
-}
+        holder.itemView.setOnClickListener(v->{
+            Intent intent = new Intent(context, ChatActivity.class);
+            AndroidUtil.passUserModelAsIntent(intent,model);
+           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        });
+
+    }
+
 
     @NonNull
     @Override
@@ -55,10 +54,13 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
         TextView phoneText;
         ImageView profilePic;
         UserModelViewHolder(@NonNull View itemView) {
-    super(itemView);
-    usernameText = itemView.findViewById(R.id.user_name_text);
-    phoneText = itemView.findViewById(R.id.phone_text);
-    profilePic = itemView.findViewById(R.id.profile_pic_image_view);
-}
+            super(itemView);
+            usernameText = itemView.findViewById(R.id.user_name_text);
+            phoneText = itemView.findViewById(R.id.phone_text);
+            profilePic = itemView.findViewById(R.id.profile_pic_image_view);
+        }
     }
 }
+
+
+
