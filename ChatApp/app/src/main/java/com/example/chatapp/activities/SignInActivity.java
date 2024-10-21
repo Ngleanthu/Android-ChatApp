@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.example.chatapp.databinding.ActivitySignInBinding;
 import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.PreferenceManager;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -19,16 +20,17 @@ public class SignInActivity extends Activity {
     private ActivitySignInBinding binding;
     private PreferenceManager preferenceManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferenceManager = new PreferenceManager(getApplicationContext());
+
         if(preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
             Intent intent = new Intent(getApplicationContext(),MainActivity.class);
             startActivity(intent);
             finish();
         }
+
         binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setListeners();
@@ -45,7 +47,6 @@ public class SignInActivity extends Activity {
         });
     }
 
-
     private void signIn(){
         loading(true);
         FirebaseFirestore database = FirebaseFirestore.getInstance();
@@ -57,6 +58,8 @@ public class SignInActivity extends Activity {
                     if(task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0){
                         DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN,true);
+                        preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
+                        preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
                         preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getId());
                         preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
                         preferenceManager.putString(Constants.KEY_BIRTHDATE, documentSnapshot.getString(Constants.KEY_BIRTHDATE));
@@ -71,7 +74,6 @@ public class SignInActivity extends Activity {
                 });
     }
 
-
     private void loading(Boolean isLoading){
         if(isLoading){
             binding.buttonSignIn.setVisibility(View.INVISIBLE);
@@ -82,7 +84,6 @@ public class SignInActivity extends Activity {
             binding.buttonSignIn.setVisibility(View.VISIBLE);
         }
     }
-
 
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();

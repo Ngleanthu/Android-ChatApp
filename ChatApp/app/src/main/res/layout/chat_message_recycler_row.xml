@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+   <LinearLayout
+       android:id="@+id/left_chat_layout"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:background="@drawable/background_input"
+       android:backgroundTint="@color/cardview_dark_background"
+       android:padding="5dp"
+       android:layout_marginEnd="80dp"
+       android:layout_marginStart="10dp"
+       >
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:textSize="14sp"
+           android:textColor="@color/white"
+           android:id="@+id/left_chat_textview"
+
+           />
+   </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_input"
+        android:backgroundTint="@color/cardview_shadow_start_color"
+        android:layout_alignParentEnd="true"
+        android:padding="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="40dp"
+        android:id="@+id/right_chat_layout"
+
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:id="@+id/right_chat_textview"
+
+            />
+    </LinearLayout>
+</RelativeLayout>
