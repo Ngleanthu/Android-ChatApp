@@ -47,17 +47,23 @@ public class SignUpActivity extends Activity {
     private void signUp(){
         loading(true);
         FirebaseFirestore database = FirebaseFirestore.getInstance();
+        String userId = database.collection(Constants.KEY_COLLECTION_USERS).document().getId();
         HashMap<String, Object> user = new HashMap<>();
         user.put(Constants.KEY_NAME, binding.inputName.getText().toString());
         user.put(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
         user.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
         user.put(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());
+        user.put(Constants.KEY_USER_ID, userId);
+
         database.collection(Constants.KEY_COLLECTION_USERS)
-                .add(user)
+                .document(userId)
+                .set(user)
                 .addOnSuccessListener(documentReference -> {
                     loading(false);
                     preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                    preferenceManager.putString(Constants.KEY_USER_ID, documentReference.getId());
+                    preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
+                    preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
+                    preferenceManager.putString(Constants.KEY_USER_ID, userId);
                     preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
                     preferenceManager.putString(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
