@@ -6,15 +6,21 @@ public class UserModel {
     private String email;
     private String name;
     private String userId;
+    private String avatarUrl; // Thêm trường hình ảnh đại diện
+    private String birthdate;  // Thêm trường ngày sinh
+    private String password;   // Thêm trường mật khẩu
     private Timestamp createdTimestamp;
 
     public UserModel() {
     }
 
-    public UserModel(String email, String name, String userId, Timestamp createdTimestamp) {
+    public UserModel(String email, String name, String userId,String avatarUrl, String birthdate, String password ,Timestamp createdTimestamp) {
         this.email = email;
         this.name = name;
         this.userId = userId;
+        this.avatarUrl = avatarUrl;
+        this.birthdate = birthdate;
+        this.password = password;
         this.createdTimestamp = createdTimestamp;
     }
 
@@ -48,5 +54,32 @@ public class UserModel {
 
     public void setCreatedTimestamp(Timestamp createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
+    }
+
+
+
+    // Getter và Setter cho các trường mới
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public String getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
