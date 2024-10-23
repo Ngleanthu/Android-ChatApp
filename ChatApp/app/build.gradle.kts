@@ -35,6 +35,8 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packaging { resources.excludes.add("META-INF/*") }
 }
 
 dependencies {
@@ -59,6 +61,10 @@ dependencies {
     implementation("com.intuit.ssp:ssp-android:1.0.6")
     implementation("com.makeramen:roundedimageview:2.3.0")
     implementation ("com.google.firebase:firebase-messaging:23.2.0' // Check for the latest version")
+
+    // http client
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
