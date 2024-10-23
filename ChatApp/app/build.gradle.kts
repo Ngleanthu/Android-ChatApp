@@ -65,6 +65,12 @@ dependencies {
     // http client
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
+    
+    // load image from url
+    implementation ("com.github.bumptech.glide:glide:4.11.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
+    //
+    implementation ("androidx.activity:activity-ktx:1.2.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
