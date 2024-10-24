@@ -8,7 +8,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.chatapp.databinding.ActivitySignInBinding;
+import com.example.chatapp.models.UserModel;
+import com.example.chatapp.utils.AndroidUtil;
 import com.example.chatapp.utils.Constants;
+import com.example.chatapp.utils.FirebaseUtil;
 import com.example.chatapp.utils.PreferenceManager;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -23,6 +26,23 @@ public class SignInActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getIntent().getExtras() != null){
+
+            // from notification
+            String userId = getIntent().getExtras().getString(Constants.KEY_USER_ID);
+            FirebaseUtil.allUserCollectionReference().document(userId).get().addOnCompleteListener(
+                    task -> {
+
+                        UserModel model = task.getResult().toObject(UserModel.class);
+                        //navigate to chat room
+                        Intent intent = new Intent(this, ChatActivity.class);
+                        AndroidUtil.passUserModelAsIntent(intent,model);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+            );
+
+        }else{
         preferenceManager = new PreferenceManager(getApplicationContext());
 
         if(preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
@@ -34,6 +54,7 @@ public class SignInActivity extends Activity {
         binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setListeners();
+        }
     }
 
 

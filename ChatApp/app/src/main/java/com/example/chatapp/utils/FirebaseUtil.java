@@ -1,5 +1,6 @@
 package com.example.chatapp.utils;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,6 +33,15 @@ public class FirebaseUtil {
             }
             callback.onCallback(null);
         });
+    }
+
+    public static String currentUserId(Context context){
+        PreferenceManager preferenceManager = new PreferenceManager(context);
+        return preferenceManager.getString(Constants.KEY_USER_ID);
+    }
+
+    public static DocumentReference currentUserDetails(Context context){
+        return FirebaseFirestore.getInstance().collection("users").document(currentUserId(context));
     }
 
     public static CollectionReference allUserCollectionReference() {
