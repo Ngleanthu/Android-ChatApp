@@ -138,4 +138,20 @@ void setupChatRecyclerView(){
             }
         });
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (adapter != null) {
+            adapter.stopListening();
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (adapter != null) {
+            adapter.startListening();
+        }
+        ;
+    }
 }
