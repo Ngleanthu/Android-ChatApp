@@ -54,6 +54,7 @@ public class SignUpActivity extends Activity {
         user.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
         user.put(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());
 
+
         user.put(Constants.KEY_IMAGE, "");
         user.put(Constants.KEY_USER_ID, userId);
 
@@ -63,6 +64,7 @@ public class SignUpActivity extends Activity {
                 .addOnSuccessListener(documentReference -> {
                     loading(false);
                     preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
+
                     preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
                     preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
                     preferenceManager.putString(Constants.KEY_USER_ID, userId);
