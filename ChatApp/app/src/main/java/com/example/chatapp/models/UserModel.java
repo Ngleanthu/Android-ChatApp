@@ -65,6 +65,7 @@ public class UserModel {
         this.fcmToken = fcmToken;
     }
 
+
     // Getter và Setter cho các trường mới
     public String getAvatarUrl() {
         return avatarUrl;

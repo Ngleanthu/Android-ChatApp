@@ -86,7 +86,15 @@ public class SignInActivity extends Activity {
                         preferenceManager.putString(Constants.KEY_BIRTHDATE, documentSnapshot.getString(Constants.KEY_BIRTHDATE));
                         preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString()); // Lưu email
                         preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString()); // Lưu password
-                        preferenceManager.putString(Constants.KEY_IMAGE, ""); // Lưu password
+
+                        // Lấy URL ảnh từ Firestore và lưu vào PreferenceManager
+                        String profileImageUrl = documentSnapshot.getString(Constants.KEY_IMAGE);
+                        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                            // Lưu URL của ảnh vào PreferenceManager
+                            preferenceManager.putString(Constants.KEY_IMAGE, profileImageUrl);
+                        }
+
+
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);

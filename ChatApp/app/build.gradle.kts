@@ -36,7 +36,11 @@ android {
         viewBinding = true
     }
 
+    buildToolsVersion = "35.0.0"
+
+
     packaging { resources.excludes.add("META-INF/*") }
+
 }
 
 dependencies {
@@ -72,7 +76,6 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
     //
     implementation ("androidx.activity:activity-ktx:1.2.0")
-
 
 
     testImplementation(libs.junit)
