@@ -60,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
 
 
+        // Kiểm tra Intent và gọi signOut nếu cần
+        if (getIntent().getBooleanExtra("signOut", false)) {
+            signOut();
+        }
+
     }
 
 
@@ -95,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void signOut(){
+    public void signOut(){
         showToast("Signing out...");
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference = database.collection(Constants.KEY_COLLECTION_USERS).document(

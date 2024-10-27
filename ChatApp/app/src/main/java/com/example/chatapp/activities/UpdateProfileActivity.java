@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chatapp.R;
@@ -41,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class UpdateProfileActivity extends AppCompatActivity {
@@ -54,7 +56,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private TableRow confirmPasswordRow;
     private TableRow recentPasswordRow;
 
-    // code mới 24/10 ===========
     private Uri imageUri;
     private String userId;
 
@@ -62,7 +63,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        showToast("onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_profile);
 
@@ -83,10 +83,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         confirmPasswordRow = findViewById(R.id.confirmPasswordRow);
         recentPasswordRow = findViewById(R.id.recentPasswordRow);
 
-
-        // code mới ===========
         userId = preferenceManager.getString(Constants.KEY_USER_ID);
-        //=================
 
         getInfoUser();
         initListener();
@@ -142,15 +139,13 @@ public class UpdateProfileActivity extends AppCompatActivity {
     }
 
     private void getInfoUser() {
-        showToast("vào hàm getUserinfo");
         // Lấy dữ liệu từ PreferenceManager
 
         profileName.setText(preferenceManager.getString(Constants.KEY_NAME));
         profileBirthdate.setText(preferenceManager.getString(Constants.KEY_BIRTHDATE));
         profileEmail.setText(preferenceManager.getString(Constants.KEY_EMAIL));
         String userAvatarUrl = preferenceManager.getString(Constants.KEY_IMAGE);
-        if (userAvatarUrl != null) {
-            showToast("lấy được url image");
+        if (userAvatarUrl != null && !userAvatarUrl.isEmpty()) {
             // Thiết lập hình ảnh đại diện nếu có URL
             Glide.with(this)
                     .load(userAvatarUrl)
@@ -179,10 +174,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         buttonUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Click vào button savechange", Toast.LENGTH_SHORT).show();
-
                 if(isValidProfileDetails()){
-
                     String name = profileName.getText().toString();
                     String birthdate = profileBirthdate.getText().toString();
                     String newPassword = profileNewPassword.getText().toString();
@@ -235,21 +227,17 @@ public class UpdateProfileActivity extends AppCompatActivity {
         activityResultLauncher.launch(Intent.createChooser(intent, "Select Picture"));
     }
 
-    // code ngày 24/10 ===============================================
-
     private void uploadImageAndSaveToFirestore(String name, String birthdate, String newPassword) {
 
         // Firebase Storage reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
 
-        Toast.makeText(getApplicationContext(), " vào hàm  uploadImageAndSaveToFirestore", Toast.LENGTH_SHORT).show();
 
 
         // Kiểm tra giá trị của imageUri
         if (imageUri == null) {
             Log.e("Upload", "Image URI is null");
-            Toast.makeText(getApplicationContext(), "Image URI is null", Toast.LENGTH_SHORT).show();
             return; // Ngừng thực hiện nếu imageUri là null
         } else {
             Log.d("Upload", "Image URI: " + imageUri.toString());
@@ -261,7 +249,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 .addOnSuccessListener(taskSnapshot -> {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         String imageUrl = uri.toString();
-                        showToast("vào hàm uploadImageAndSaveToFirestore");
                         // cập nhật thông tin người dùng vào Firestore
                         updateUserInFirestore(name, birthdate, imageUrl, newPassword);
                     });
@@ -303,8 +290,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     // Xử lý khi cập nhật thành công
                     Log.d("Firestore", "User profile updated successfully");
-                    Toast.makeText(getApplicationContext(), "User profile updated successfully", Toast.LENGTH_SHORT).show();
-
                     updateInfoUserToPreferenceManger(name, birthdate, imageUrl ,newPassword);
                     finish(); // Đóng Activity hiện tại, trở về Activity trước đó
                 })
@@ -332,24 +317,18 @@ public class UpdateProfileActivity extends AppCompatActivity {
     }
 
     private void updateInfoUserToPreferenceManger(String name, String birthdate,String imageUrl, String newPassword) {
-
-        showToast("vào hàm cập nhật preference");
         if (!name.isEmpty()) {
             preferenceManager.putString(Constants.KEY_NAME, name);
-            showToast("cập nhật name");
         }
         if (!birthdate.isEmpty()) {
             preferenceManager.putString(Constants.KEY_BIRTHDATE, birthdate);
-            showToast("cập nhật birthday");
         }
         if (!newPassword.isEmpty()) {
             preferenceManager.putString(Constants.KEY_PASSWORD, newPassword);
-            showToast("cập nhật password");
         }
 
-        if (! imageUrl.isEmpty()) {
+        if (!imageUrl.isEmpty()) {
             preferenceManager.putString(Constants.KEY_IMAGE, imageUrl);
-            showToast("cập nhật url ảnh");
         }
     }
 
@@ -370,20 +349,17 @@ public class UpdateProfileActivity extends AppCompatActivity {
             showToast("Enter valid birthdate in format dd/MM/yyyy");
             return false;
         } else if (!profileNewPassword.getText().toString().isEmpty()) {
-            if (profileNewPassword.getText().toString().trim().isEmpty()) {
-                showToast("Enter password");
-                return false;
-            } else if (profileConfirmPassword.getText().toString().trim().isEmpty()) {
-                showToast("Enter your new password");
+            if (profileConfirmPassword.getText().toString().trim().isEmpty()) {
+                showToast("Enter confirm password");
                 return false;
             } else if (profileRecentPassword.getText().toString().trim().isEmpty()) {
-                showToast("Enter recent your password");
+                showToast("Enter your recent password");
                 return false;
             } else if (!profileNewPassword.getText().toString().equals(profileConfirmPassword.getText().toString())) {
-                showToast("Password & confirm password must be same");
+                showToast("New password & confirm password must be same");
                 return false;
             } else if (!profileRecentPassword.getText().toString().equals(preferenceManager.getString(Constants.KEY_PASSWORD))) {
-                showToast("Password & confirm password must be same");
+                showToast("Recent password is incorrect!");
                 return false;
             }
         }

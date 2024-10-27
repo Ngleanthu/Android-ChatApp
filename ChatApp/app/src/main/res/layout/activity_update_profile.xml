@@ -1,285 +1,301 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activities.UpdateProfileActivity"
-    android:orientation="vertical">
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:overScrollMode="never"
+    android:scrollbars="none"
+    tools:context=".activities.UpdateProfileActivity">
 
-    <!-- Toolbar with Back button and Title -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:layout_marginBottom="30dp">
-
-        <!-- Back button -->
-        <ImageButton
-            android:id="@+id/buttonBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
-            android:src="@drawable/icon_back"
-            app:tint="@android:color/white" />
-
-        <!-- Title -->
-        <TextView
-            android:id="@+id/textTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Update Profile"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </androidx.appcompat.widget.Toolbar>
-
-
-    <!-- Profile Image -->
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/imageProfile"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        android:layout_marginTop="16dp"
-        android:src="@mipmap/ic_default_profile"
-        android:scaleType="centerCrop"
-        app:riv_corner_radius="70dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        />
-
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="@dimen/_10sdp">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".activities.UpdateProfileActivity"
+        android:orientation="vertical">
 
-        <TableLayout
+        <!-- Toolbar with Back button and Title -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_20sdp">
+            android:background="@color/primary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:layout_marginBottom="30dp">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/_10sdp">
+            <!-- Back button -->
+            <ImageButton
+                android:id="@+id/buttonBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Back"
+                android:src="@drawable/icon_back"
+                app:tint="@android:color/white" />
 
-                <TextView
-                    android:id="@+id/textViewName"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+            <!-- Title -->
+            <TextView
+                android:id="@+id/textTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Update Profile"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </androidx.appcompat.widget.Toolbar>
 
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Name"
-                    android:textSize="@dimen/_13sdp" />
 
-                <EditText
-                    android:id="@+id/profileName"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="@drawable/background_input"
-                    android:ems="10"
-                    android:gravity="center_vertical"
-                    android:inputType="text"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:textColor="@color/primary_text"
-                    android:paddingLeft="10dp"
-                    android:textSize="@dimen/_13ssp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/_10sdp">
-
-                <TextView
-                    android:id="@+id/textViewBirthdate"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Date of birth"
-                    android:textSize="@dimen/_13sdp" />
-
-                <EditText
-                    android:id="@+id/profileBirthdate"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="@drawable/background_input"
-                    android:ems="10"
-                    android:gravity="center_vertical"
-                    android:inputType="text"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:textColor="@color/primary_text"
-                    android:paddingLeft="10dp"
-                    android:textSize="@dimen/_13ssp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/_10sdp">
-
-                <TextView
-                    android:id="@+id/textViewEmail"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Email"
-                    android:textSize="@dimen/_13sdp" />
-
-                <TextView
-                    android:id="@+id/profileEmail"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="@drawable/background_input"
-                    android:ems="10"
-                    android:gravity="center_vertical"
-                    android:inputType="text"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:textColor="@color/primary_text"
-                    android:paddingLeft="10dp"
-                    android:textSize="@dimen/_13ssp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/_10sdp">
-
-                <TextView
-                    android:id="@+id/textViewPassword"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Password"
-                    android:textSize="@dimen/_13sdp" />
-
-                <EditText
-                    android:id="@+id/profileNewPassword"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="@drawable/background_input"
-                    android:ems="10"
-                    android:gravity="center_vertical"
-                    android:inputType="textPassword"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:textColor="@color/primary_text"
-                    android:paddingLeft="10dp"
-                    android:textSize="@dimen/_13ssp" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:visibility="invisible"
-                android:id="@+id/confirmPasswordRow">
-
-                <TextView
-                    android:id="@+id/textViewConfirmPassword"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Confirm password"
-                    android:textSize="@dimen/_13sdp" />
-
-                <EditText
-                    android:id="@+id/profileConfirmPassword"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="@drawable/background_input"
-                    android:ems="10"
-                    android:gravity="center_vertical"
-                    android:inputType="textPassword"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:textColor="@color/primary_text"
-                    android:paddingLeft="10dp"
-                    android:textSize="@dimen/_13ssp"
-                    />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:visibility="invisible"
-                android:id="@+id/recentPasswordRow">
-
-                <TextView
-                    android:id="@+id/textViewRecentPassword"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Recent password"
-                    android:textSize="@dimen/_13sdp" />
-
-                <EditText
-                    android:id="@+id/profileRecentPassword"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="@drawable/background_input"
-                    android:ems="10"
-                    android:gravity="center_vertical"
-                    android:inputType="textPassword"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:textColor="@color/primary_text"
-                    android:paddingLeft="10dp"
-                    android:textSize="@dimen/_13ssp" />
-            </TableRow>
-
-        </TableLayout>
+        <!-- Profile Image -->
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imageProfile"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/background_icon"
+            android:src="@mipmap/ic_default_profile"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="70dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/_10sdp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonUpdateProfile"
+            <TableLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_50sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:text="Save change"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_13ssp"
-                android:textStyle="bold"
-                app:cornerRadius="@dimen/_10sdp" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_20sdp">
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_25sdp"
-                android:layout_gravity="center"
-                android:visibility="invisible"/>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/_10sdp">
+
+                    <TextView
+                        android:id="@+id/textViewName"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Name"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <EditText
+                        android:id="@+id/profileName"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="@drawable/background_input"
+                        android:ems="10"
+                        android:gravity="center_vertical"
+                        android:inputType="text"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:textColor="@color/primary_text"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/_13ssp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/_10sdp">
+
+                    <TextView
+                        android:id="@+id/textViewBirthdate"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Date of birth"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <EditText
+                        android:id="@+id/profileBirthdate"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="@drawable/background_input"
+                        android:ems="10"
+                        android:gravity="center_vertical"
+                        android:inputType="text"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:textColor="@color/primary_text"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/_13ssp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/_10sdp">
+
+                    <TextView
+                        android:id="@+id/textViewEmail"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Email"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <TextView
+                        android:id="@+id/profileEmail"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="@drawable/background_input"
+                        android:ems="10"
+                        android:gravity="center_vertical"
+                        android:inputType="text"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:textColor="@color/primary_text"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/_13ssp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/_10sdp">
+
+                    <TextView
+                        android:id="@+id/textViewPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Password"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <EditText
+                        android:id="@+id/profileNewPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="@drawable/background_input"
+                        android:ems="10"
+                        android:gravity="center_vertical"
+                        android:inputType="textPassword"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:textColor="@color/primary_text"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/_13ssp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:visibility="invisible"
+                    android:id="@+id/confirmPasswordRow">
+
+                    <TextView
+                        android:id="@+id/textViewConfirmPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Confirm password"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <EditText
+                        android:id="@+id/profileConfirmPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="@drawable/background_input"
+                        android:ems="10"
+                        android:gravity="center_vertical"
+                        android:inputType="textPassword"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:textColor="@color/primary_text"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/_13ssp"
+                        />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:visibility="invisible"
+                    android:id="@+id/recentPasswordRow">
+
+                    <TextView
+                        android:id="@+id/textViewRecentPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Recent password"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <EditText
+                        android:id="@+id/profileRecentPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="@drawable/background_input"
+                        android:ems="10"
+                        android:gravity="center_vertical"
+                        android:inputType="textPassword"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:textColor="@color/primary_text"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/_13ssp" />
+                </TableRow>
+
+            </TableLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonUpdateProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:text="Save change"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold"
+                    app:cornerRadius="@dimen/_10sdp" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+
+
+</ScrollView>

@@ -44,6 +44,7 @@
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_marginTop="16dp"
+        android:background="@drawable/background_icon"
         android:src="@mipmap/ic_default_profile"
         android:scaleType="centerCrop"
         app:riv_corner_radius="80dp"
