@@ -63,7 +63,7 @@ public class SignUpActivity extends Activity {
                     preferenceManager.putString(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());
                     preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString()); // Lưu email
                     preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString()); // Lưu password
-                    preferenceManager.putString(Constants.KEY_IMAGE, ""); // Lưu password
+                    preferenceManager.putString(Constants.KEY_IMAGE, "image"); // Lưu password
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

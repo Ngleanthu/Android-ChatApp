@@ -1,6 +1,7 @@
 package com.example.chatapp.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.utils.Constants;
-import com.example.chatapp.utils.ImageUtil;
 import com.example.chatapp.utils.PreferenceManager;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -48,6 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent(ProfileActivity.this, UpdateProfileActivity.class);
                 // Chuyển đến UpdateProfileActivity
                 startActivity(intent);
+                getCurrentUserDetails();
             }
         });
 
@@ -57,8 +58,6 @@ public class ProfileActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-//        ImageUtil.setImageProfileFromPreferences(this, imageProfile, preferenceManager);
     }
 
     private void getCurrentUserDetails() {
@@ -67,13 +66,10 @@ public class ProfileActivity extends AppCompatActivity {
         String birthdate = preferenceManager.getString(Constants.KEY_BIRTHDATE); // Ngày sinh người dùng
 
         String userAvatarUrl = preferenceManager.getString(Constants.KEY_IMAGE);
-        if (userAvatarUrl != null) {
-            // Thiết lập hình ảnh đại diện nếu có URL
-            Glide.with(this)
-                    .load(userAvatarUrl)
-                    .placeholder(R.mipmap.ic_default_profile) // Hình ảnh mặc định
-                    .into(imageProfile);
-        }
+        Glide.with(this)
+                .load(userAvatarUrl)
+                .placeholder(R.drawable.ic_default_profile_foreground) // Hình ảnh placeholder khi đang tải ảnh
+                .into(imageProfile); // ImageView để hiển thị ảnh
 
 
         // Hiển thị thông tin lên các TextView
@@ -82,11 +78,12 @@ public class ProfileActivity extends AppCompatActivity {
         textBirthdate.setText(birthdate != null ? birthdate : "N/A");
     }
 
-//    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-//        ImageUtil.setImageProfileFromPreferences(this, imageProfile, preferenceManager);
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getCurrentUserDetails();
+    }
+
 }
 
 

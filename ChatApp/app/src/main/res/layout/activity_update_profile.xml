@@ -189,7 +189,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp">
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:visibility="invisible"
+                android:id="@+id/confirmPasswordRow">
 
                 <TextView
                     android:id="@+id/textViewConfirmPassword"
@@ -213,14 +215,17 @@
                     android:paddingBottom="@dimen/_5sdp"
                     android:textColor="@color/primary_text"
                     android:paddingLeft="10dp"
-                    android:textSize="@dimen/_13ssp" />
+                    android:textSize="@dimen/_13ssp"
+                    />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp">
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:visibility="invisible"
+                android:id="@+id/recentPasswordRow">
 
                 <TextView
                     android:id="@+id/textViewRecentPassword"
@@ -265,12 +270,13 @@
                 android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 app:cornerRadius="@dimen/_10sdp" />
-            <!--        <ProgressBar-->
-            <!--            android:layout_width="32dp"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:indeterminateTint="@color/primary"-->
-            <!--            android:layout_gravity="center"-->
-            <!--            android:id="@+id/profileProgressBar"/>-->
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_gravity="center"
+                android:visibility="invisible"/>
 
         </LinearLayout>
 
