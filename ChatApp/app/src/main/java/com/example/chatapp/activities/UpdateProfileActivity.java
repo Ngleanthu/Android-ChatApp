@@ -17,12 +17,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TableRow;
+
+import android.provider.MediaStore;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chatapp.R;
@@ -33,16 +35,24 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.bumptech.glide.Glide;
 import androidx.annotation.NonNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+
+import com.example.chatapp.utils.ImageUtil;
+
 
 
 public class UpdateProfileActivity extends AppCompatActivity {
@@ -58,6 +68,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     private Uri imageUri;
     private String userId;
+
 
     private ActivityResultLauncher<Intent> activityResultLauncher;
 
@@ -87,7 +98,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
         getInfoUser();
         initListener();
-
+        profileEmail = findViewById(R.id.profileEmail);
 
         // Khởi tạo ActivityResultLauncher
         activityResultLauncher = registerForActivityResult(
@@ -98,15 +109,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
                         if (data != null) {
                             Uri uri = data.getData();
                             if (uri != null) {
+
                                 // Hiển thị ảnh từ Uri trực tiếp lên ImageView
                                 imageProfile.setImageURI(uri);
                                 // lưu lại uri
                                 imageUri = uri;
-
-                                // Lưu Uri vào SharedPreferences (hoặc nơi nào khác)
-                                //preferenceManager.putString(Constants.KEY_IMAGE, uri.toString());
-
-                                // Toast.makeText(getApplicationContext(), "Image URI saved to Preferences", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -140,7 +147,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     private void getInfoUser() {
         // Lấy dữ liệu từ PreferenceManager
-
         profileName.setText(preferenceManager.getString(Constants.KEY_NAME));
         profileBirthdate.setText(preferenceManager.getString(Constants.KEY_BIRTHDATE));
         profileEmail.setText(preferenceManager.getString(Constants.KEY_EMAIL));
@@ -389,3 +395,4 @@ public class UpdateProfileActivity extends AppCompatActivity {
     }
 
 }
+
