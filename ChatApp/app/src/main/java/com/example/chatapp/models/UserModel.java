@@ -10,6 +10,7 @@ public class UserModel {
     private String birthdate;  // Thêm trường ngày sinh
     private String password;   // Thêm trường mật khẩu
     private Timestamp createdTimestamp;
+    private String fcmToken;
 
     public UserModel() {
     }
@@ -57,6 +58,13 @@ public class UserModel {
     }
 
 
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 
     // Getter và Setter cho các trường mới
     public String getAvatarUrl() {

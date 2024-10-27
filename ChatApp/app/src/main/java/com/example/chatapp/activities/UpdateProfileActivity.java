@@ -5,6 +5,7 @@ import static com.example.chatapp.activities.MainActivity.MY_REQUEST_CODE;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TableRow;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,15 +34,25 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import com.google.firebase.storage.UploadTask;
+
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.bumptech.glide.Glide;
 import androidx.annotation.NonNull;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+
+import com.example.chatapp.utils.ImageUtil;
 
 
 public class UpdateProfileActivity extends AppCompatActivity {
@@ -49,20 +61,20 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private PreferenceManager preferenceManager;
     private RoundedImageView imageProfile;
     private MaterialButton buttonUpdateProfile;
+
     private ProgressBar progressBar;
     private TextView profileEmail;
     private TableRow confirmPasswordRow;
     private TableRow recentPasswordRow;
 
-    // code mới 24/10 ===========
     private Uri imageUri;
     private String userId;
+
 
     private ActivityResultLauncher<Intent> activityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        showToast("onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_profile);
 
@@ -83,13 +95,12 @@ public class UpdateProfileActivity extends AppCompatActivity {
         confirmPasswordRow = findViewById(R.id.confirmPasswordRow);
         recentPasswordRow = findViewById(R.id.recentPasswordRow);
 
-
-        // code mới ===========
         userId = preferenceManager.getString(Constants.KEY_USER_ID);
-        //=================
 
         getInfoUser();
         initListener();
+        profileEmail = findViewById(R.id.profileEmail);
+
 
 
         // Khởi tạo ActivityResultLauncher
@@ -105,11 +116,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
                                 imageProfile.setImageURI(uri);
                                 // lưu lại uri
                                 imageUri = uri;
-
-                                // Lưu Uri vào SharedPreferences (hoặc nơi nào khác)
-                                //preferenceManager.putString(Constants.KEY_IMAGE, uri.toString());
-
-                                // Toast.makeText(getApplicationContext(), "Image URI saved to Preferences", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -142,15 +148,12 @@ public class UpdateProfileActivity extends AppCompatActivity {
     }
 
     private void getInfoUser() {
-        showToast("vào hàm getUserinfo");
-        // Lấy dữ liệu từ PreferenceManager
-
         profileName.setText(preferenceManager.getString(Constants.KEY_NAME));
         profileBirthdate.setText(preferenceManager.getString(Constants.KEY_BIRTHDATE));
         profileEmail.setText(preferenceManager.getString(Constants.KEY_EMAIL));
         String userAvatarUrl = preferenceManager.getString(Constants.KEY_IMAGE);
         if (userAvatarUrl != null) {
-            showToast("lấy được url image");
+            
             // Thiết lập hình ảnh đại diện nếu có URL
             Glide.with(this)
                     .load(userAvatarUrl)
@@ -202,6 +205,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
         // từ android 6 trở xuống thì không cần request permission
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+
             openGallery();
             return;
         }
@@ -210,6 +214,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
             openGallery();
         } else {
             String[] permission = {android.Manifest.permission.READ_EXTERNAL_STORAGE};
+
             requestPermissions(permission, MY_REQUEST_CODE);
         }
 
@@ -234,8 +239,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
         intent.setType("image/*");
         activityResultLauncher.launch(Intent.createChooser(intent, "Select Picture"));
     }
-
-    // code ngày 24/10 ===============================================
 
     private void uploadImageAndSaveToFirestore(String name, String birthdate, String newPassword) {
 
@@ -413,3 +416,5 @@ public class UpdateProfileActivity extends AppCompatActivity {
     }
 
 }
+
+

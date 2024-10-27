@@ -2,6 +2,7 @@ package com.example.chatapp.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.utils.Constants;
+
+
 import com.example.chatapp.utils.PreferenceManager;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -48,7 +51,9 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent(ProfileActivity.this, UpdateProfileActivity.class);
                 // Chuyển đến UpdateProfileActivity
                 startActivity(intent);
+
                 getCurrentUserDetails();
+
             }
         });
 
@@ -72,11 +77,13 @@ public class ProfileActivity extends AppCompatActivity {
                 .into(imageProfile); // ImageView để hiển thị ảnh
 
 
+
         // Hiển thị thông tin lên các TextView
         textUsername.setText(name != null ? name : "N/A");
         textEmail.setText(email != null ? email : "N/A");
         textBirthdate.setText(birthdate != null ? birthdate : "N/A");
     }
+
 
     @Override
     protected void onResume() {
