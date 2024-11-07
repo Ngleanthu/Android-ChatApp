@@ -10,6 +10,7 @@ import android.util.Log;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,5 +43,4 @@ public class PreferenceManager {
         editor.clear();
         editor.apply();
     }
-
 }

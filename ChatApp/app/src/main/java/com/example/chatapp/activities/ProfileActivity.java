@@ -1,7 +1,9 @@
 package com.example.chatapp.activities;
 
 import android.content.Intent;
+
 import android.net.Uri;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.utils.Constants;
+
 import com.example.chatapp.utils.PreferenceManager;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -50,6 +53,7 @@ public class ProfileActivity extends AppCompatActivity {
                 // Chuyển đến UpdateProfileActivity
                 startActivity(intent);
                 getCurrentUserDetails();
+
             }
         });
 
@@ -67,18 +71,19 @@ public class ProfileActivity extends AppCompatActivity {
         String birthdate = preferenceManager.getString(Constants.KEY_BIRTHDATE); // Ngày sinh người dùng
 
         String userAvatarUrl = preferenceManager.getString(Constants.KEY_IMAGE);
-        if (userAvatarUrl != null && !userAvatarUrl.isEmpty()){
+        if (userAvatarUrl != null) {
+            // Thiết lập hình ảnh đại diện nếu có URL
             Glide.with(this)
                     .load(userAvatarUrl)
-                    .placeholder(R.drawable.ic_default_profile_foreground) // Hình ảnh placeholder khi đang tải ảnh
-                    .into(imageProfile); // ImageView để hiển thị ảnh
+                    .placeholder(R.mipmap.ic_default_profile) // Hình ảnh mặc định
+                    .into(imageProfile);
         }
-
         // Hiển thị thông tin lên các TextView
         textUsername.setText(name != null ? name : "N/A");
         textEmail.setText(email != null ? email : "N/A");
         textBirthdate.setText(birthdate != null ? birthdate : "N/A");
     }
+
 
     @Override
     protected void onResume() {

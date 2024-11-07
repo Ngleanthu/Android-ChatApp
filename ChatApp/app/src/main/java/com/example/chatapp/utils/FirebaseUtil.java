@@ -117,7 +117,6 @@ public class FirebaseUtil {
         void onCallback(String userId);
     }
 
-//================ 27/10
     public static CollectionReference allChatroomCollectionReference(){
         return FirebaseFirestore.getInstance().collection("chatrooms");
     }
