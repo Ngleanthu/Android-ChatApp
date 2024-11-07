@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int MY_REQUEST_CODE = 100;
 
 
-//    ChatFragment chatFragment;
+    ChatFragment chatFragment;
 
     private ActivityMainBinding binding;
     private PreferenceManager preferenceManager;
@@ -47,14 +47,14 @@ public class MainActivity extends AppCompatActivity {
 
         loadUserDetails();
 
-//        chatFragment = new ChatFragment();
-//
-//        // Hiển thị ChatFragment mặc định
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.fragment_container, chatFragment)
-//                    .commit();
-//        }
+        chatFragment = new ChatFragment();
+
+        // Hiển thị ChatFragment mặc định
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, chatFragment)
+                    .commit();
+        }
 
         getToken();
         setListeners();

@@ -111,6 +111,7 @@ void setupChatRecyclerView(){
         if (currentUserId != null) { // Đảm bảo currentUserId đã có giá trị
             chatRoomModel.setLastMessageSenderId(currentUserId);
             chatRoomModel.setLastMessageTimestamp(Timestamp.now());
+            chatRoomModel.setLastMessage(message);
             FirebaseUtil.getChatroomReference(chatroomId).set(chatRoomModel);
 
             ChatMessageModel chatMessageModel = new ChatMessageModel(message, currentUserId, Timestamp.now());

@@ -1,7 +1,13 @@
 package com.example.chatapp.utils;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.chatapp.models.UserModel;
 
 public class AndroidUtil {
@@ -17,4 +23,9 @@ public class AndroidUtil {
     userModel.setUserId(intent.getStringExtra("userId"));
     return userModel;
     }
+
+    public static void setProfilePic(Context context, Uri imageUri, ImageView imageView){
+        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
+    }
+
 }
