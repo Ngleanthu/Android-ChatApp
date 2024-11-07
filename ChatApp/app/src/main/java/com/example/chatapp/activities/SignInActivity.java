@@ -79,12 +79,26 @@ public class SignInActivity extends Activity {
                     if(task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0){
                         DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN,true);
+                        preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
+                        preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
                         preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getId());
                         preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
                         preferenceManager.putString(Constants.KEY_BIRTHDATE, documentSnapshot.getString(Constants.KEY_BIRTHDATE));
+                        preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString()); // Lưu email
+                        preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString()); // Lưu password
+
+                        // Lấy URL ảnh từ Firestore và lưu vào PreferenceManager
+                        String profileImageUrl = documentSnapshot.getString(Constants.KEY_IMAGE);
+                        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                            // Lưu URL của ảnh vào PreferenceManager
+                            preferenceManager.putString(Constants.KEY_IMAGE, profileImageUrl);
+                        }
+
+
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
+
                     }
                     else{
                         loading(false);
