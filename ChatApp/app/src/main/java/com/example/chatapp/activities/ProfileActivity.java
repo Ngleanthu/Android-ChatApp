@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -67,8 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void getCurrentUserDetails() {
         String name = preferenceManager.getString(Constants.KEY_NAME); // Tên người dùng
         String email = preferenceManager.getString(Constants.KEY_EMAIL); // Email người dùng
-
-        String birthdate = preferenceManager.getString(Constants.KEY_PASSWORD); // Ngày sinh người dùng
+        String birthdate = preferenceManager.getString(Constants.KEY_BIRTHDATE); // Ngày sinh người dùng
 
         String userAvatarUrl = preferenceManager.getString(Constants.KEY_IMAGE);
         if (userAvatarUrl != null) {
