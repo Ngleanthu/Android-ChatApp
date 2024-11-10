@@ -24,26 +24,35 @@ import kotlin.text.UStringsKt;
 public class FirebaseUtil {
 
 
-//    // Lấy FCM token và tìm ID người dùng từ Firestore
-//    public static void currentUserId(String fcmToken, CurrentUserIdCallback callback) {
-//        Log.d("ChatActivity", "Retrieving user ID for FCM Token: " + fcmToken);
-//
-//        FirebaseFirestore database = FirebaseFirestore.getInstance();
-//        CollectionReference usersCollection = database.collection("users");
-//
-//        // Tìm kiếm người dùng theo token
-//        Query query = usersCollection.whereEqualTo("fcmToken", fcmToken);
-//        query.get().addOnCompleteListener(task -> {
-//            if (task.isSuccessful() && task.getResult() != null && task.getResult().size() > 0) {
-//                for (QueryDocumentSnapshot document : task.getResult()) {
-//                    // Gọi callback với ID người dùng
-//                    callback.onCallback(document.getId());
-//                    return;
-//                }
-//            }
-//            callback.onCallback(null);
-//        });
-//    }
+    // Lấy FCM token và tìm ID người dùng từ Firestore
+    public static void currentUserId(String fcmToken, CurrentUserIdCallback callback) {
+        Log.d("ChatActivity", "Retrieving user ID for FCM Token: " + fcmToken);
+
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        CollectionReference usersCollection = database.collection("users");
+
+        // Tìm kiếm người dùng theo token
+        Query query = usersCollection.whereEqualTo("fcmToken", fcmToken);
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().size() > 0) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    // Gọi callback với ID người dùng
+                    callback.onCallback(document.getId());
+                    return;
+                }
+            }
+            callback.onCallback(null);
+        });
+    }
+
+    public static String currentUserId(Context context){
+        PreferenceManager preferenceManager = new PreferenceManager(context);
+        return preferenceManager.getString(Constants.KEY_USER_ID);
+    }
+
+    public static DocumentReference currentUserDetails(Context context){
+        return FirebaseFirestore.getInstance().collection("users").document(currentUserId(context));
+    }
     public static CollectionReference allUserCollectionReference() {
         return FirebaseFirestore.getInstance().collection("users");
     }
