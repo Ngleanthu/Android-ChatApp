@@ -37,7 +37,6 @@ import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.databinding.ActivityMainBinding;
 import com.example.chatapp.utils.Constants;
-import com.example.chatapp.utils.ImageUtil;
 import com.example.chatapp.utils.PreferenceManager;
 
 import com.google.firebase.firestore.DocumentReference;
