@@ -51,7 +51,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.example.chatapp.utils.ImageUtil;
 
 
 
@@ -189,7 +188,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                     if (imageUri != null) {
                         uploadImageAndSaveToFirestore(name, birthdate, newPassword);
                     } else {
-                        updateUserInFirestore(name, birthdate, null, newPassword);
+                        updateUserInFirestore(name, birthdate, "", newPassword);
                     }
                 }
             }
@@ -269,7 +268,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private void updateUserInFirestore(String name, String birthdate, String imageUrl, String newPassword) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userRef = db.collection("users").document(userId);
-
         // Kiểm tra userId đã được lấy đúng chưa
         if (userId == null || userId.isEmpty()) {
             Log.e("Firestore", "User ID is null or empty");
@@ -287,7 +285,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
             updatedUser.put("password", newPassword);
         }
 
-        if (imageUrl != null) {
+        if (imageUrl != "") {
             updatedUser.put("image", imageUrl); // Cập nhật URL ảnh nếu có
         }
 
@@ -305,21 +303,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Error updating profile", Toast.LENGTH_SHORT).show();
                 });
 
-        // Cập nhật mật khẩu mới (nếu có) mà không cần xác thực lại
-//        if (!newPassword.isEmpty()) {
-//            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//            if (user != null) {
-//                // Cập nhật mật khẩu
-//                user.updatePassword(newPassword)
-//                        .addOnCompleteListener(task -> {
-//                            if (task.isSuccessful()) {
-//                                Log.d("PasswordUpdate", "Password updated successfully");
-//                            } else {
-//                                Log.e("PasswordUpdate", "Password update failed", task.getException());
-//                            }
-//                        });
-//            }
-//        }
     }
 
     private void updateInfoUserToPreferenceManger(String name, String birthdate,String imageUrl, String newPassword) {
