@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,9 +28,16 @@ import com.example.chatapp.utils.AndroidUtil;
 import com.example.chatapp.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
@@ -62,6 +70,7 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ChatRecyclerAdapter adapter;
 
+    private ListenerRegistration messageListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +89,11 @@ public class ChatActivity extends AppCompatActivity {
                             chatroomId = FirebaseUtil.getChatroomId(currentUserId, otherUser.getUserId());
                             getOrCreateChatroomModel();
                             setupChatRecyclerView();
-
+                            try {
+                                initializeChatListener();
+                            }catch (Exception e){
+                                Log.e("initializeChatListener", "Error: " + e.getMessage());
+                            }
                         }
                     });
                 }
@@ -103,25 +116,26 @@ public class ChatActivity extends AppCompatActivity {
                 sendMessageToUser(message); // Gửi tin nhắn
             }
         }));
+
     }
-void setupChatRecyclerView(){
-    Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
+    void setupChatRecyclerView(){
+        Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
 
-    Query query = FirebaseUtil.getChatroomMessagesReference(chatroomId).orderBy("timestamp", Query.Direction.DESCENDING);
+        Query query = FirebaseUtil.getChatroomMessagesReference(chatroomId).orderBy("timestamp", Query.Direction.DESCENDING);
 
 
-    FirestoreRecyclerOptions<ChatMessageModel> options = new FirestoreRecyclerOptions.Builder<ChatMessageModel>()
-            .setQuery(query, ChatMessageModel.class).build();
-    Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
-    adapter = new ChatRecyclerAdapter(options, getApplicationContext(),currentUserId);
-    LinearLayoutManager manager=new LinearLayoutManager(this);
-    manager.setReverseLayout(true);
+        FirestoreRecyclerOptions<ChatMessageModel> options = new FirestoreRecyclerOptions.Builder<ChatMessageModel>()
+                .setQuery(query, ChatMessageModel.class).build();
+        Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
+        adapter = new ChatRecyclerAdapter(options, getApplicationContext(),currentUserId);
+        LinearLayoutManager manager=new LinearLayoutManager(this);
+        manager.setReverseLayout(true);
 
-    recyclerView.setLayoutManager(manager);
+        recyclerView.setLayoutManager(manager);
 
-    recyclerView.setAdapter(adapter);
-    adapter.startListening();
-}
+        recyclerView.setAdapter(adapter);
+        adapter.startListening();
+    }
     void sendMessageToUser(String message) {
         if (currentUserId != null) { // Đảm bảo currentUserId đã có giá trị
             chatRoomModel.setLastMessageSenderId(currentUserId);
@@ -159,6 +173,10 @@ void setupChatRecyclerView(){
     @Override
     protected void onStop() {
         super.onStop();
+        if (messageListener != null) {
+            messageListener.remove();
+            messageListener = null;
+        }
         if (adapter != null) {
             adapter.stopListening();
         }
@@ -167,10 +185,12 @@ void setupChatRecyclerView(){
     @Override
     protected void onStart() {
         super.onStart();
+        if (messageListener == null) {
+            initializeChatListener();
+        }
         if (adapter != null) {
             adapter.startListening();
         }
-        ;
     }
 
     void sendNotification(String message) {
@@ -205,7 +225,7 @@ void setupChatRecyclerView(){
 
                     }
                 } else {
-                    Log.e("sendNotification", "User details or FCM token is null");
+                    Log.e("sendNotification", "FCM token: " + otherUser.getFcmToken());
                 }
             } else {
                 Log.e("sendNotification", "Failed to get current user details: " + task.getException().getMessage());
@@ -225,7 +245,7 @@ void setupChatRecyclerView(){
 
             new Handler(Looper.getMainLooper()).post(() -> {
                 if(token != null){
-                    Log.e("Access Token: ", "Successfully obtain access token");
+                    Log.d("Access Token: ", "Successfully obtain access token");
                 }else{
                     Log.e("Access Token: ", "Failed to obtain access token");
 
@@ -270,5 +290,43 @@ void setupChatRecyclerView(){
 
     }
 
+    public void listenForIncomingMessages(String chatroomId, String currentUserId) {
 
+        CollectionReference messagesRef = FirebaseUtil.getChatroomMessagesReference(chatroomId);
+
+        Log.d("listenForIncomingMessage", "Enter");
+        messageListener = messagesRef
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        Log.e("ChatActivity", "Error listening for messages: ", error);
+                        return;
+                    }
+
+                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                        adapter.notifyDataSetChanged();
+                        recyclerView.scrollToPosition(0);
+                        for (DocumentChange docChange : querySnapshot.getDocumentChanges()) {
+                            if (docChange.getType() == DocumentChange.Type.ADDED) {
+                                ChatMessageModel message = docChange.getDocument().toObject(ChatMessageModel.class);
+
+                                // Update seen property if the message is for the current user
+                                if (!message.getSenderId().equals(currentUserId) && !message.isSeen()) {
+                                    docChange.getDocument().getReference().update("seen", true)
+                                            .addOnSuccessListener(aVoid -> Log.d("ChatActivity", "Message marked as seen"))
+                                            .addOnFailureListener(e -> Log.e("ChatActivity", "Failed to update seen status", e));
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void initializeChatListener() {
+        if (chatroomId != null && currentUserId != null) {
+            listenForIncomingMessages(chatroomId, currentUserId);
+        } else {
+            Log.e("ChatActivity", "Chatroom ID or Current User ID is not ready yet.");
+        }
+    }
 }

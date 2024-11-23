@@ -41,6 +41,26 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatTextView.setText(model.getMessage());
         }
+
+        // Chỉ cập nhật đã xem với tin nhắn mới nhất
+        if (position == 0) {
+            if (model.getSenderId().equals(currentUserId)) {
+                if(model.isSeen()) {
+                    // Nếu tin nhắn được gửi bởi người dùng hiện tại và đã được xem
+                    holder.seenTextView.setVisibility(View.VISIBLE);
+                    holder.seenTextView.setText("Seen");
+                }
+                else {
+                    holder.seenTextView.setVisibility(View.VISIBLE);
+                    holder.seenTextView.setText("Delivered");
+                }
+            }
+            else {
+                holder.seenTextView.setVisibility(View.GONE);
+            }
+        } else {
+            holder.seenTextView.setVisibility(View.GONE);
+        }
     }
 
     @NonNull
@@ -52,7 +72,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
     class ChatModelViewHolder extends RecyclerView.ViewHolder {
         LinearLayout leftChatLayout, rightChatLayout;
-        TextView leftChatTextView, rightChatTextView;
+        TextView leftChatTextView, rightChatTextView, seenTextView;
 
         ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,6 +80,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             rightChatLayout = itemView.findViewById(R.id.right_chat_layout);
             leftChatTextView = itemView.findViewById(R.id.left_chat_textview);
             rightChatTextView = itemView.findViewById(R.id.right_chat_textview);
+            seenTextView = itemView.findViewById(R.id.seen_textview);
         }
     }
 }
