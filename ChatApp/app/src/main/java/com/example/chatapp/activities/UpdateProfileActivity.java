@@ -248,6 +248,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
             Log.d("Upload", "Image URI: " + imageUri.toString());
         }
         // Đường dẫn cho file ảnh trong Firebase Storage
+//        StorageReference imageRef = storageReference.child("users/" + preferenceManager.getString(Constants.KEY_USER_ID) + "/profile.jpg");
         StorageReference imageRef = storageReference.child("users/" + preferenceManager.getString(Constants.KEY_USER_ID) + "/profile.jpg");
         // Tải ảnh từ imageUri lên Firebase Storage
         imageRef.putFile(imageUri)

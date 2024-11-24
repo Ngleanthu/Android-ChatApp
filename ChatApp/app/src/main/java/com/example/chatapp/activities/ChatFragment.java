@@ -23,6 +23,7 @@ import com.example.chatapp.utils.PreferenceManager;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
 public class ChatFragment extends Fragment {
@@ -59,9 +60,21 @@ public class ChatFragment extends Fragment {
                         .whereArrayContains("userId", preferenceManager.getString(Constants.KEY_USER_ID))
                                 .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING);
 
-
         FirestoreRecyclerOptions<ChatRoomModel> options = new FirestoreRecyclerOptions.Builder<ChatRoomModel>()
                 .setQuery(query, ChatRoomModel.class).build();
+
+        // Kiểm tra danh sách trả về
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                // In danh sách lấy từ Firestore
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    ChatRoomModel chatRoom = document.toObject(ChatRoomModel.class);
+                    Log.d("FirestoreData", "ChatRoom: " + chatRoom.toString());
+                }
+            } else {
+                Log.e("FirestoreData", "Error getting documents: ", task.getException());
+            }
+        });
 
         adapter = new RecentCharRecyclerAdapter(options, getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

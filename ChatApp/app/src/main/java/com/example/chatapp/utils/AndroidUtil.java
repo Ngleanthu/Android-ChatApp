@@ -16,6 +16,7 @@ public class AndroidUtil {
         intent.putExtra("email", userModel.getEmail());
         intent.putExtra("userId", userModel.getUserId());
         intent.putExtra("fcmToken", userModel.getFcmToken());
+        intent.putExtra("image", userModel.getImage());
     }
     public static UserModel getUserModelFromIntent(Intent intent) {
     UserModel userModel = new UserModel();
@@ -23,12 +24,10 @@ public class AndroidUtil {
     userModel.setEmail(intent.getStringExtra("email"));
     userModel.setUserId(intent.getStringExtra("userId"));
     userModel.setFcmToken(intent.getStringExtra("fcmToken"));
+    userModel.setImage(intent.getStringExtra("image"));
 
     return userModel;
     }
 
-    public static void setProfilePic(Context context, Uri imageUri, ImageView imageView){
-        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
-    }
 
 }
