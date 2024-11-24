@@ -19,44 +19,47 @@
         android:scaleType="centerCrop"
         app:riv_corner_radius="@dimen/_20sdp"
         android:layout_gravity="center"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        >
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
             <TextView
+                android:id="@+id/user_name_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="User name"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:id="@+id/user_name_text"
-                />
+                tools:text="User name" />
+
             <TextView
+                android:id="@+id/last_message_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="10:00"
-                android:layout_alignParentEnd="true"
-                android:id="@+id/last_message_time_text"
-                android:layout_marginEnd="10dp"
-                />
+                tools:text="000000" />
 
-        </RelativeLayout>
-
+        </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="000000"
-            android:id="@+id/last_message_text"
+            tools:text="10:00"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/last_message_time_text"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="center"
             />
-
     </LinearLayout>
+
 </LinearLayout>
