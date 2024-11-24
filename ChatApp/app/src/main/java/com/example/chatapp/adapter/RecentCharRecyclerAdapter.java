@@ -3,25 +3,17 @@ package com.example.chatapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.example.chatapp.R;
 import com.example.chatapp.activities.ChatActivity;
 import com.example.chatapp.models.ChatRoomModel;
@@ -32,6 +24,7 @@ import com.example.chatapp.utils.FirebaseUtil;
 import com.example.chatapp.utils.PreferenceManager;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoomModel, RecentCharRecyclerAdapter.ChatRoomModelViewHolder> {
 
@@ -41,56 +34,55 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
         super(options);
         this.context=context;
     }
+
     @Override
     protected void onBindViewHolder(@NonNull ChatRoomModelViewHolder holder, int position, @NonNull ChatRoomModel model) {
 
         PreferenceManager preferenceManager = new PreferenceManager(context.getApplicationContext());
         String currentUserId = preferenceManager.getString(Constants.KEY_USER_ID);
 
-
-        FirebaseUtil.getOtherUserFromChatroom(model.getUserId(),currentUserId )
+        FirebaseUtil.getOtherUserFromChatroom(model.getUserId(), currentUserId)
                 .get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        boolean lastMessageSendByMe = model.getLastMessageSenderId().equals(currentUserId);
-                        Toast.makeText(context, "getOtherUserFromChatroom thanh cong", Toast.LENGTH_SHORT).show();
-                        UserModel otherUserModel = task.getResult().toObject(UserModel.class);
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            UserModel otherUserModel = document.toObject(UserModel.class);
 
-//                        FirebaseUtil.getOtherProfilePicStorageRef(otherUserModel.getUserId()).getDownloadUrl()
-//                                        .addOnCompleteListener(t -> {
-//                                            if(t.isSuccessful()){
-//                                                Uri uri = t.getResult();
-//////                                                holder.profilePic.setImageURI(uri);
-//                                                Toast.makeText(context, "lây uri thành công", Toast.LENGTH_SHORT).show();
-////                                                AndroidUtil.setProfilePic(context, uri,holder.profilePic);
-//
-//                                                if (uri != null) {
-//                                                    AndroidUtil.setProfilePic(context, uri, holder.profilePic);
-//                                                } else {
-//                                                    Toast.makeText(context, "URI không hợp lệ", Toast.LENGTH_SHORT).show();
-//                                                }
-//                                            }
-//                                        });
+                            if (otherUserModel != null) {
+                                // In thông tin UserModel để kiểm tra ánh xạ
+                                Log.d("FirebaseDebug", "UserModel: " + otherUserModel.getUserId() + "  Image"+ otherUserModel.getImage());
+                                // Thiết lập giao diện với UserModel
+                                holder.usernameText.setText(otherUserModel.getName());
+                                String lastMessage = model.getLastMessage();
+                                String formattedLastMessage = FirebaseUtil.formatLastMessage(lastMessage);
+                                boolean lastMessageSendByMe = model.getLastMessageSenderId().equals(currentUserId);
 
+                                holder.lastMessageText.setText(lastMessageSendByMe ? "You: " + formattedLastMessage : formattedLastMessage);
+                                holder.lastMessageTime.setText(FirebaseUtil.timestampToString(model.getLastMessageTimestamp()));
 
-                        holder.usernameText.setText(otherUserModel.getName());
-                        String lastMessage = model.getLastMessage();
-                        String formatedLastMessage = FirebaseUtil.formatLastMessage(lastMessage);
-                        if(lastMessageSendByMe){
-                            holder.lastMessageText.setText("You: " + formatedLastMessage );
-                        }else{
-                            holder.lastMessageText.setText(formatedLastMessage);
+                                String imageUrl = otherUserModel.getImage();
+                                if (imageUrl != null && !imageUrl.isEmpty()) {
+                                    Glide.with(context)
+                                            .load(imageUrl)
+                                            .placeholder(R.drawable.ic_default_profile_foreground) // Ảnh tạm
+                                            .into(holder.profilePic);
+                                }
+                                holder.itemView.setOnClickListener(v -> {
+                                    Intent intent = new Intent(context, ChatActivity.class);
+                                    AndroidUtil.passUserModelAsIntent(intent, otherUserModel);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    context.startActivity(intent);
+                                });
+                            } else {
+                                Log.e("FirebaseError", "UserModel is null after mapping.");
+                            }
+                        } else {
+                            Log.e("FirebaseError", "Document does not exist.");
                         }
-
-                        holder.lastMessageTime.setText(FirebaseUtil.timestampToString(model.getLastMessageTimestamp()));
-
-                        holder.itemView.setOnClickListener(v -> {
-                            Intent intent = new Intent(context, ChatActivity.class);
-                            AndroidUtil.passUserModelAsIntent(intent, otherUserModel);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
-                        });
+                    } else {
+                        Log.e("FirebaseError", "Error fetching document: ", task.getException());
                     }
-                } );
+                });
     }
 
     // Ghi đè phương thức onDataChanged
@@ -118,9 +110,11 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
             usernameText = itemView.findViewById(R.id.user_name_text);
             lastMessageText = itemView.findViewById(R.id.last_message_text);
             lastMessageTime = itemView.findViewById(R.id.last_message_time_text);
-            profilePic = itemView.findViewById(R.id.profileImageView);
+            profilePic = itemView.findViewById(R.id.image_other_chat_profile);
         }
     }
+
+
 }
 
 
