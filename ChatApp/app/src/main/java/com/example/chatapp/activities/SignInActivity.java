@@ -8,7 +8,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.chatapp.databinding.ActivitySignInBinding;
+import com.example.chatapp.models.UserModel;
+import com.example.chatapp.utils.AndroidUtil;
 import com.example.chatapp.utils.Constants;
+import com.example.chatapp.utils.FirebaseUtil;
 import com.example.chatapp.utils.PreferenceManager;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -23,6 +26,23 @@ public class SignInActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getIntent().getExtras() != null){
+
+            // from notification
+            String userId = getIntent().getExtras().getString(Constants.KEY_USER_ID);
+            FirebaseUtil.allUserCollectionReference().document(userId).get().addOnCompleteListener(
+                    task -> {
+
+                        UserModel model = task.getResult().toObject(UserModel.class);
+                        //navigate to chat room
+                        Intent intent = new Intent(this, ChatActivity.class);
+                        AndroidUtil.passUserModelAsIntent(intent,model);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+            );
+
+        }else{
         preferenceManager = new PreferenceManager(getApplicationContext());
 
         if(preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
@@ -34,6 +54,7 @@ public class SignInActivity extends Activity {
         binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setListeners();
+        }
     }
 
 
@@ -65,7 +86,15 @@ public class SignInActivity extends Activity {
                         preferenceManager.putString(Constants.KEY_BIRTHDATE, documentSnapshot.getString(Constants.KEY_BIRTHDATE));
                         preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString()); // Lưu email
                         preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString()); // Lưu password
-                        preferenceManager.putString(Constants.KEY_IMAGE, ""); // Lưu password
+
+                        // Lấy URL ảnh từ Firestore và lưu vào PreferenceManager
+                        String profileImageUrl = documentSnapshot.getString(Constants.KEY_IMAGE);
+                        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                            // Lưu URL của ảnh vào PreferenceManager
+                            preferenceManager.putString(Constants.KEY_IMAGE, profileImageUrl);
+                        }
+
+
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);

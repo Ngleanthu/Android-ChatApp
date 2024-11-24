@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="15sp"
     android:layout_marginVertical="20sp">
-<include
+    <include
     layout="@layout/profile_pic_view"
     android:layout_width="52dp"
     android:layout_height="52dp"

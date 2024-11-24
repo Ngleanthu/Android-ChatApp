@@ -53,7 +53,6 @@ public class SignUpActivity extends Activity {
         user.put(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
         user.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
         user.put(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());
-
         user.put(Constants.KEY_IMAGE, "");
         user.put(Constants.KEY_USER_ID, userId);
 
@@ -63,6 +62,7 @@ public class SignUpActivity extends Activity {
                 .addOnSuccessListener(documentReference -> {
                     loading(false);
                     preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
+
                     preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
                     preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
                     preferenceManager.putString(Constants.KEY_USER_ID, userId);
@@ -70,7 +70,8 @@ public class SignUpActivity extends Activity {
                     preferenceManager.putString(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());
                     preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString()); // Lưu email
                     preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString()); // Lưu password
-                    preferenceManager.putString(Constants.KEY_IMAGE, ""); 
+
+                    preferenceManager.putString(Constants.KEY_IMAGE, "image"); // Lưu password
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

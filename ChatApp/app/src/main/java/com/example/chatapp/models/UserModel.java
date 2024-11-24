@@ -6,19 +6,20 @@ public class UserModel {
     private String email;
     private String name;
     private String userId;
-    private String avatarUrl; // Thêm trường hình ảnh đại diện
+    private String image; // Thêm trường hình ảnh đại diện
     private String birthdate;  // Thêm trường ngày sinh
     private String password;   // Thêm trường mật khẩu
     private Timestamp createdTimestamp;
+    private String fcmToken;
 
     public UserModel() {
     }
 
-    public UserModel(String email, String name, String userId,String avatarUrl, String birthdate, String password ,Timestamp createdTimestamp) {
+    public UserModel(String email, String name, String userId,String image, String birthdate, String password ,Timestamp createdTimestamp) {
         this.email = email;
         this.name = name;
         this.userId = userId;
-        this.avatarUrl = avatarUrl;
+        this.image = image;
         this.birthdate = birthdate;
         this.password = password;
         this.createdTimestamp = createdTimestamp;
@@ -56,15 +57,22 @@ public class UserModel {
         this.createdTimestamp = createdTimestamp;
     }
 
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 
 
     // Getter và Setter cho các trường mới
     public String getAvatarUrl() {
-        return avatarUrl;
+        return image;
     }
 
     public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
+        this.image = avatarUrl;
     }
 
     public String getBirthdate() {
