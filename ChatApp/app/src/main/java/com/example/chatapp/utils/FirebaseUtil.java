@@ -157,16 +157,17 @@ public class FirebaseUtil {
     }
 
     public static String formatLastMessage(String message) {
-        // Chia tin nhắn thành các dòng
+        if (message == null || message.isEmpty()) {
+            return "";
+        }
         String[] lines = message.split("\\n");
 
-        String firstLine = lines[0]; // Lấy dòng đầu tiên
+        String firstLine = lines[0];
 
-        // Kiểm tra độ dài của dòng đầu tiên
         if (firstLine.length() > 30) {
-            return firstLine.substring(0, 30) + "…"; // Cắt đến 30 ký tự và thêm dấu "…"
+            return firstLine.substring(0, 30) + "…";
         } else {
-            return firstLine; // Nếu độ dài <= 30, trả về dòng đầu tiên
+            return firstLine;
         }
     }
 }
