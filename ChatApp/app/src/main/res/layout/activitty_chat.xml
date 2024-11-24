@@ -18,17 +18,24 @@
             android:layout_height="wrap_content"
             android:text="Username"
             android:textColor="@color/white"
-            android:textSize="32sp"
-            android:layout_marginStart="10sp"
+            android:textSize="26sp"
             android:layout_toRightOf="@id/profile_pic_layout"
             android:id="@+id/other_username"
+            android:layout_gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
             />
-        <include layout="@layout/profile_pic_view"
+        <com.makeramen.roundedimageview.RoundedImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="10dp"
             android:layout_toRightOf="@id/back_btn"
             android:id="@+id/profile_pic_layout"
+            android:src="@mipmap/ic_default_profile"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="@dimen/_20sdp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
             />
 
         <ImageButton
@@ -41,13 +48,15 @@
             android:src="@drawable/icon_back"
             android:id="@+id/back_btn"/>
     </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
-        android:id="@+id/chat_recycler_view"
         android:layout_above="@id/botton_layout"
-        />
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="-6dp"
+        android:layout_marginBottom="5dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"

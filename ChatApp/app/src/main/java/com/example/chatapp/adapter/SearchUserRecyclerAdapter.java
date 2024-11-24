@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.activities.ChatActivity;
 import com.example.chatapp.models.UserModel;
@@ -31,6 +32,14 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
     protected void onBindViewHolder(@NonNull UserModelViewHolder holder, int position, @NonNull UserModel model) {
         holder.usernameText.setText(model.getName());
         holder.phoneText.setText(model.getEmail());
+
+        String imageUrl = model.getImage();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_default_profile_foreground) // Ảnh tạm
+                    .into(holder.profilePic);
+        }
 
         holder.itemView.setOnClickListener(v->{
             Intent intent = new Intent(context, ChatActivity.class);
@@ -57,7 +66,7 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
             super(itemView);
             usernameText = itemView.findViewById(R.id.user_name_text);
             phoneText = itemView.findViewById(R.id.phone_text);
-            profilePic = itemView.findViewById(R.id.profile_pic_image_view);
+            profilePic = itemView.findViewById(R.id.image_search_other_profile);
         }
     }
 }
