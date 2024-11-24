@@ -65,14 +65,23 @@ public class UserModel {
         this.fcmToken = fcmToken;
     }
 
-    // Getter và Setter cho các trường mới
-    public String getAvatarUrl() {
-        return image;
+    public void setImage(String image) {
+        this.image = image; // Phương thức setter cho image
     }
 
-    public void setAvatarUrl(String avatarUrl) {
-        this.image = avatarUrl;
+    public String getImage() {
+        return image; // Phương thức getter cho image
     }
+
+    // Getter và Setter cho password
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
 
     public String getBirthdate() {
         return birthdate;
@@ -80,13 +89,5 @@ public class UserModel {
 
     public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

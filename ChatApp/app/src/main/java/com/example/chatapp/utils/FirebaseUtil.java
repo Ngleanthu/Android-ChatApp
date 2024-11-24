@@ -17,6 +17,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import kotlin.text.UStringsKt;
@@ -148,7 +149,25 @@ public class FirebaseUtil {
     }
 
     public static String timestampToString (Timestamp timestamp){
-        return new SimpleDateFormat("HH:mm").format(timestamp.toDate());
+        // Lấy thời gian hiện tại
+        Calendar currentCalendar = Calendar.getInstance();
+        Calendar timestampCalendar = Calendar.getInstance();
+        timestampCalendar.setTime(timestamp.toDate());
+
+        // So sánh ngày, tháng, năm
+        boolean isToday = currentCalendar.get(Calendar.YEAR) == timestampCalendar.get(Calendar.YEAR)
+                && currentCalendar.get(Calendar.DAY_OF_YEAR) == timestampCalendar.get(Calendar.DAY_OF_YEAR);
+
+        if (isToday) {
+            // Chỉ trả về giờ:phút nếu là ngày hiện tại
+            return new SimpleDateFormat("HH:mm").format(timestamp.toDate());
+        } else {
+            // Trả về định dạng 2 dòng: giờ:phút và ngày/tháng
+            String time = new SimpleDateFormat("HH:mm").format(timestamp.toDate());
+            String date = new SimpleDateFormat("dd/MM").format(timestamp.toDate());
+            return time + "\n" + date;
+        }
+
     }
 
     public static StorageReference getOtherProfilePicStorageRef(String otherUserId){
@@ -157,16 +176,17 @@ public class FirebaseUtil {
     }
 
     public static String formatLastMessage(String message) {
-        // Chia tin nhắn thành các dòng
+        if (message == null || message.isEmpty()) {
+            return "";
+        }
         String[] lines = message.split("\\n");
 
-        String firstLine = lines[0]; // Lấy dòng đầu tiên
+        String firstLine = lines[0];
 
-        // Kiểm tra độ dài của dòng đầu tiên
         if (firstLine.length() > 30) {
-            return firstLine.substring(0, 30) + "…"; // Cắt đến 30 ký tự và thêm dấu "…"
+            return firstLine.substring(0, 30) + "…";
         } else {
-            return firstLine; // Nếu độ dài <= 30, trả về dòng đầu tiên
+            return firstLine;
         }
     }
 }

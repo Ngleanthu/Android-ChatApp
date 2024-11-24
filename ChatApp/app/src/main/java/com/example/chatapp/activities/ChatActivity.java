@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.adapter.ChatRecyclerAdapter;
 import com.example.chatapp.adapter.SearchUserRecyclerAdapter;
@@ -69,6 +71,7 @@ public class ChatActivity extends AppCompatActivity {
     TextView otherUsername;
     RecyclerView recyclerView;
     ChatRecyclerAdapter adapter;
+    ImageView imageProfile;
 
     private ListenerRegistration messageListener;
     @Override
@@ -106,9 +109,19 @@ public class ChatActivity extends AppCompatActivity {
         backBtn = findViewById(R.id.back_btn);
         otherUsername = findViewById(R.id.other_username);
         recyclerView = findViewById(R.id.chat_recycler_view);
+        imageProfile = findViewById(R.id.profile_pic_layout);
+
 
         backBtn.setOnClickListener((v) -> getOnBackPressedDispatcher().onBackPressed());
         otherUsername.setText(otherUser.getName());
+        String imageUrl = otherUser.getImage();
+        Log.d("CHATACTIVITY", "UserModel: " + otherUser.getUserId() + "  Image: "+ otherUser.getImage());
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(this)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_default_profile_foreground) // Ảnh tạm
+                    .into(imageProfile);
+        }
 
         sendMessageBtn.setOnClickListener((v -> {
             String message = messageInput.getText().toString().trim();
