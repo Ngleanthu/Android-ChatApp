@@ -72,14 +72,14 @@ public class MainActivity extends AppCompatActivity {
 
         loadUserDetails();
 
-//        chatFragment = new ChatFragment();
-//
-//        // Hiển thị ChatFragment mặc định
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.fragment_container, chatFragment)
-//                    .commit();
-//        }
+        chatFragment = new ChatFragment();
+
+        // Hiển thị ChatFragment mặc định
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, chatFragment)
+                    .commit();
+        }
 
         getToken();
         setListeners();
