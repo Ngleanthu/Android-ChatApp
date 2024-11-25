@@ -38,6 +38,11 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
     @Override
     protected void onBindViewHolder(@NonNull ChatRoomModelViewHolder holder, int position, @NonNull ChatRoomModel model) {
 
+        holder.usernameText.setText("");
+        holder.lastMessageText.setText("");
+        holder.lastMessageTime.setText("");
+        holder.profilePic.setImageResource(R.mipmap.ic_default_profile);
+
         PreferenceManager preferenceManager = new PreferenceManager(context.getApplicationContext());
         String currentUserId = preferenceManager.getString(Constants.KEY_USER_ID);
 
