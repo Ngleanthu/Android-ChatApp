@@ -3,6 +3,7 @@ package com.example.chatapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.activities.ChatActivity;
+import com.example.chatapp.models.ChatMessageModel;
 import com.example.chatapp.models.ChatRoomModel;
 import com.example.chatapp.models.UserModel;
 import com.example.chatapp.utils.AndroidUtil;
@@ -43,6 +45,7 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
         holder.lastMessageTime.setText("");
         holder.profilePic.setImageResource(R.mipmap.ic_default_profile);
 
+        Log.d("Recent chat", "enter");
         PreferenceManager preferenceManager = new PreferenceManager(context.getApplicationContext());
         String currentUserId = preferenceManager.getString(Constants.KEY_USER_ID);
 
@@ -61,6 +64,21 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
                                 String lastMessage = model.getLastMessage();
                                 String formattedLastMessage = FirebaseUtil.formatLastMessage(lastMessage);
                                 boolean lastMessageSendByMe = model.getLastMessageSenderId().equals(currentUserId);
+
+                                // Notify user if they haven't seen latest messages
+                                try {
+                                    Log.d("ChatRecyclerAdapter", model.toString());
+                                    boolean isLastMessageSeen = model.getLastMessageSeen();
+                                    Log.d("ChatRecyclerAdaper", "isLastMessageSeen: " + isLastMessageSeen);
+                                    if (!isLastMessageSeen && !lastMessageSendByMe) {
+                                        holder.lastMessageText.setTypeface(null, Typeface.BOLD);
+                                        Log.d("Lastmessage", "Set bold message: " + lastMessage);
+                                    } else {
+                                        holder.lastMessageText.setTypeface(null, Typeface.NORMAL);
+                                    }
+                                }catch (Exception e){
+                                    Log.e("ChatRecyclerAdapter", e.getMessage());
+                                }
 
                                 holder.lastMessageText.setText(lastMessageSendByMe ? "You: " + formattedLastMessage : formattedLastMessage);
                                 holder.lastMessageTime.setText(FirebaseUtil.timestampToString(model.getLastMessageTimestamp()));
