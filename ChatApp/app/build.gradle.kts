@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
+
     implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
@@ -78,6 +79,7 @@ dependencies {
     //
     implementation ("androidx.activity:activity-ktx:1.2.0")
 
+    implementation("androidx.emoji2:emoji2-emojipicker:1.5.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

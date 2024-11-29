@@ -4,12 +4,14 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.chatapp.models.ChatMessageModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -145,7 +147,7 @@ public class FirebaseUtil {
         }
 
         // Nếu không tìm thấy, có thể ném ngoại lệ hoặc trả về null
-        throw new IllegalArgumentException("No other user found in the chatroom.");
+        return allUserCollectionReference().document(currentUserId);
     }
 
     public static String timestampToString (Timestamp timestamp){
