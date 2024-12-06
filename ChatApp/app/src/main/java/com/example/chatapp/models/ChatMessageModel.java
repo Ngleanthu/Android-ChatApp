@@ -6,6 +6,7 @@ public class ChatMessageModel {
 private String message;
 private String senderId;
 private Timestamp timestamp;
+private boolean seen;
 
     public ChatMessageModel() {
     }
@@ -14,6 +15,7 @@ private Timestamp timestamp;
         this.message = message;
         this.senderId = senderId;
         this.timestamp = timestamp;
+        this.seen = false;
     }
 
     public String getMessage() {
@@ -38,5 +40,13 @@ private Timestamp timestamp;
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
     }
 }

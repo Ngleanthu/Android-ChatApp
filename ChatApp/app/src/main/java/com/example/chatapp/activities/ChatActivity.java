@@ -4,15 +4,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.emoji2.emojipicker.EmojiPickerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,9 +33,16 @@ import com.example.chatapp.utils.AndroidUtil;
 import com.example.chatapp.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
@@ -60,11 +71,15 @@ public class ChatActivity extends AppCompatActivity {
     EditText messageInput;
     ImageButton sendMessageBtn;
     ImageButton backBtn;
+    ImageButton emojiBtn;
+    EmojiPickerView emojiPicker;
+    RelativeLayout bottomLayout;
     TextView otherUsername;
     RecyclerView recyclerView;
     ChatRecyclerAdapter adapter;
     ImageView imageProfile;
 
+    private ListenerRegistration messageListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +98,11 @@ public class ChatActivity extends AppCompatActivity {
                             chatroomId = FirebaseUtil.getChatroomId(currentUserId, otherUser.getUserId());
                             getOrCreateChatroomModel();
                             setupChatRecyclerView();
-
+                            try {
+                                initializeChatListener();
+                            }catch (Exception e){
+                                Log.e("initializeChatListener", "Error: " + e.getMessage());
+                            }
                         }
                     });
                 }
@@ -93,6 +112,9 @@ public class ChatActivity extends AppCompatActivity {
 
         messageInput = findViewById(R.id.chat_message_input);
         sendMessageBtn = findViewById(R.id.message_send_button);
+        emojiBtn = findViewById(R.id.emoji_button);
+        emojiPicker = findViewById(R.id.emoji_picker);
+        bottomLayout = findViewById(R.id.bottom_layout);
         backBtn = findViewById(R.id.back_btn);
         otherUsername = findViewById(R.id.other_username);
         recyclerView = findViewById(R.id.chat_recycler_view);
@@ -116,30 +138,39 @@ public class ChatActivity extends AppCompatActivity {
                 sendMessageToUser(message); // Gửi tin nhắn
             }
         }));
+
+        emojiBtn.setOnClickListener(v -> toggleEmojiPicker());
+
+        emojiPicker.setOnEmojiPickedListener(emoji -> {
+            messageInput.append(emoji.getEmoji());
+            messageInput.requestFocus();
+        });
+
     }
-void setupChatRecyclerView(){
-    Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
+    void setupChatRecyclerView(){
+        Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
 
-    Query query = FirebaseUtil.getChatroomMessagesReference(chatroomId).orderBy("timestamp", Query.Direction.DESCENDING);
+        Query query = FirebaseUtil.getChatroomMessagesReference(chatroomId).orderBy("timestamp", Query.Direction.DESCENDING);
 
 
-    FirestoreRecyclerOptions<ChatMessageModel> options = new FirestoreRecyclerOptions.Builder<ChatMessageModel>()
-            .setQuery(query, ChatMessageModel.class).build();
-    Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
-    adapter = new ChatRecyclerAdapter(options, getApplicationContext(),currentUserId);
-    LinearLayoutManager manager=new LinearLayoutManager(this);
-    manager.setReverseLayout(true);
+        FirestoreRecyclerOptions<ChatMessageModel> options = new FirestoreRecyclerOptions.Builder<ChatMessageModel>()
+                .setQuery(query, ChatMessageModel.class).build();
+        Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
+        adapter = new ChatRecyclerAdapter(options, getApplicationContext(),currentUserId);
+        LinearLayoutManager manager=new LinearLayoutManager(this);
+        manager.setReverseLayout(true);
 
-    recyclerView.setLayoutManager(manager);
+        recyclerView.setLayoutManager(manager);
 
-    recyclerView.setAdapter(adapter);
-    adapter.startListening();
-}
+        recyclerView.setAdapter(adapter);
+        adapter.startListening();
+    }
     void sendMessageToUser(String message) {
         if (currentUserId != null) { // Đảm bảo currentUserId đã có giá trị
             chatRoomModel.setLastMessageSenderId(currentUserId);
             chatRoomModel.setLastMessageTimestamp(Timestamp.now());
             chatRoomModel.setLastMessage(message);
+            chatRoomModel.setLastMessageSeen(false);
             FirebaseUtil.getChatroomReference(chatroomId).set(chatRoomModel);
 
             ChatMessageModel chatMessageModel = new ChatMessageModel(message, currentUserId, Timestamp.now());
@@ -172,6 +203,10 @@ void setupChatRecyclerView(){
     @Override
     protected void onStop() {
         super.onStop();
+        if (messageListener != null) {
+            messageListener.remove();
+            messageListener = null;
+        }
         if (adapter != null) {
             adapter.stopListening();
         }
@@ -180,10 +215,12 @@ void setupChatRecyclerView(){
     @Override
     protected void onStart() {
         super.onStart();
+        if (messageListener == null) {
+            initializeChatListener();
+        }
         if (adapter != null) {
             adapter.startListening();
         }
-        ;
     }
 
     void sendNotification(String message) {
@@ -218,7 +255,7 @@ void setupChatRecyclerView(){
 
                     }
                 } else {
-                    Log.e("sendNotification", "User details or FCM token is null");
+                    Log.e("sendNotification", "FCM token: " + otherUser.getFcmToken());
                 }
             } else {
                 Log.e("sendNotification", "Failed to get current user details: " + task.getException().getMessage());
@@ -238,7 +275,7 @@ void setupChatRecyclerView(){
 
             new Handler(Looper.getMainLooper()).post(() -> {
                 if(token != null){
-                    Log.e("Access Token: ", "Successfully obtain access token");
+                    Log.d("Access Token: ", "Successfully obtain access token");
                 }else{
                     Log.e("Access Token: ", "Failed to obtain access token");
 
@@ -283,5 +320,109 @@ void setupChatRecyclerView(){
 
     }
 
+    public void listenForIncomingMessages(String chatroomId, String currentUserId) {
+
+        CollectionReference messagesRef = FirebaseUtil.getChatroomMessagesReference(chatroomId);
+
+        Log.d("listenForIncomingMessage", "Enter");
+        messageListener = messagesRef
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        Log.e("ChatActivity", "Error listening for messages: ", error);
+                        return;
+                    }
+
+                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                        // Update UI when seen status changed or new messages arrive
+                        adapter.notifyDataSetChanged();
+
+                        // Scroll screen automatically to the latest message
+                        recyclerView.scrollToPosition(0);
+
+                        for (DocumentChange docChange : querySnapshot.getDocumentChanges()) {
+                            if (docChange.getType() == DocumentChange.Type.ADDED) {
+                                ChatMessageModel message = docChange.getDocument().toObject(ChatMessageModel.class);
+
+                                // Update seen property if the message is for the current user
+                                if (!message.getSenderId().equals(currentUserId) && !message.isSeen()) {
+                                    docChange.getDocument().getReference().update("seen", true)
+                                            .addOnSuccessListener(aVoid -> {
+                                                Log.d("ChatActivity", "Message marked as seen");
+
+                                                // Check if this is the latest message
+                                                messagesRef
+                                                        .orderBy("timestamp", Query.Direction.DESCENDING)
+                                                        .limit(1)
+                                                        .get()
+                                                        .addOnSuccessListener(querySnapshot1 -> {
+                                                            if (!querySnapshot1.isEmpty()) {
+                                                                DocumentSnapshot latestMessageDoc = querySnapshot1.getDocuments().get(0);
+                                                                String latestMessageId = latestMessageDoc.getId();
+
+                                                                // Compare IDs to determine if this is the latest message
+                                                                if (docChange.getDocument().getId().equals(latestMessageId)) {
+                                                                    // Update isLastMessageSeen in ChatRoomModel
+                                                                    FirebaseUtil.getChatroomReference(chatroomId)
+                                                                            .update("lastMessageSeen", true)
+                                                                            .addOnSuccessListener(aVoid1 -> Log.d("ChatActivity", "isLastMessageSeen updated successfully"))
+                                                                            .addOnFailureListener(e -> Log.e("ChatActivity", "Failed to update isLastMessageSeen", e));
+                                                                }
+                                                            }
+                                                        });
+                                            })
+                                            .addOnFailureListener(e -> Log.e("ChatActivity", "Failed to update seen status", e));
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void initializeChatListener() {
+        if (chatroomId != null && currentUserId != null) {
+            listenForIncomingMessages(chatroomId, currentUserId);
+        } else {
+            Log.e("ChatActivity", "Chatroom ID or Current User ID is not ready yet.");
+        }
+    }
+
+    private void toggleEmojiPicker() {
+        if (emojiPicker.getVisibility() == View.GONE) {
+            showEmojiPicker();
+        } else {
+            hideEmojiPicker();
+        }
+    }
+
+    private void showEmojiPicker() {
+        emojiPicker.setVisibility(View.VISIBLE);
+
+        // Adjust bottom_layout position
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) bottomLayout.getLayoutParams();
+        params.addRule(RelativeLayout.ABOVE, R.id.emoji_picker);
+        params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        bottomLayout.setLayoutParams(params);
+
+        scrollChatToBottom();
+    }
+
+    private void hideEmojiPicker() {
+        emojiPicker.setVisibility(View.GONE);
+
+        // Reset bottom_layout position
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) bottomLayout.getLayoutParams();
+        params.addRule(RelativeLayout.ABOVE, 0);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        bottomLayout.setLayoutParams(params);
+    }
+
+    private void scrollChatToBottom() {
+        recyclerView.post(() -> {
+            if (recyclerView.getAdapter() != null) {
+                recyclerView.scrollToPosition(0);
+            }
+        });
+    }
 
 }

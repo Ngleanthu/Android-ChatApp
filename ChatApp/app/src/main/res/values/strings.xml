@@ -13,5 +13,7 @@
     <string name="sign_in">Sign In</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="seen">Seen</string>
+    <string name="delivered">Delivered</string>
 
 </resources>
