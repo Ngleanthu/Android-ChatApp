@@ -11,8 +11,10 @@
         android:background="@drawable/background_input"
         android:backgroundTint="@color/cardview_dark_background"
         android:padding="5dp"
+        android:orientation="vertical"
         android:layout_marginEnd="80dp"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -33,6 +35,8 @@
         android:layout_marginEnd="10dp"
         android:layout_marginStart="40dp"
         android:id="@+id/right_chat_layout"
+        android:orientation="vertical"
+
 
         >
         <TextView
