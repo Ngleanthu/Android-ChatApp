@@ -1,4 +1,8 @@
 package com.example.chatapp.adapter;
+import static com.example.chatapp.utils.YoutubeUtil.addYouTubeWebView;
+import static com.example.chatapp.utils.YoutubeUtil.containsYouTubeLink;
+import static com.example.chatapp.utils.YoutubeUtil.extractYouTubeId;
+
 
 import android.content.Context;
 import android.util.Log;
@@ -6,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapp.R;
@@ -24,13 +30,14 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatMessageModel> options, Context context, String currentUserId) {
         super(options);
         this.context = context;
-        this.currentUserId = currentUserId;  // Lưu giá trị vào biến thành viên
+        this.currentUserId = currentUserId;  //000 Lưu giá trị vào biến thành viên
     }
 
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
         Log.d("chat apd", "setupChatRecyclerView: " + currentUserId );
-        if (model.getSenderId().equals(currentUserId)) {
+        boolean isCurrentUser = model.getSenderId().equals(currentUserId);
+        if (isCurrentUser) {
             // Nếu là tin nhắn của người dùng hiện tại
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatLayout.setVisibility(View.GONE);
@@ -40,6 +47,15 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatTextView.setText(model.getMessage());
+        }
+        if (containsYouTubeLink(model.getMessage())) {
+            String videoId = extractYouTubeId(model.getMessage());
+            if (videoId != null) {
+                Log.d("ChatRecyclerAdapter", "Video ID: " + videoId);
+
+                LinearLayout layout= isCurrentUser ? holder.rightChatLayout : holder.leftChatLayout;
+                addYouTubeWebView(layout, videoId, holder.itemView.getContext());
+            }
         }
 
         // Chỉ cập nhật đã xem với tin nhắn mới nhất
@@ -73,9 +89,11 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     class ChatModelViewHolder extends RecyclerView.ViewHolder {
         LinearLayout leftChatLayout, rightChatLayout;
         TextView leftChatTextView, rightChatTextView, seenTextView;
+        RelativeLayout mainLayout;
 
         ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);
+            mainLayout = itemView.findViewById(R.id.main); // Tham chiếu đến mainLayout
             leftChatLayout = itemView.findViewById(R.id.left_chat_layout);
             rightChatLayout = itemView.findViewById(R.id.right_chat_layout);
             leftChatTextView = itemView.findViewById(R.id.left_chat_textview);
