@@ -3,6 +3,8 @@ package com.example.chatapp.activities;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -30,6 +32,7 @@ import com.example.chatapp.models.ChatRoomModel;
 import com.example.chatapp.models.ChatMessageModel;
 import com.example.chatapp.models.UserModel;
 import com.example.chatapp.utils.AndroidUtil;
+import com.example.chatapp.utils.EmojiConverter;
 import com.example.chatapp.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.Timestamp;
@@ -131,6 +134,29 @@ public class ChatActivity extends AppCompatActivity {
                     .placeholder(R.drawable.ic_default_profile_foreground) // Ảnh tạm
                     .into(imageProfile);
         }
+
+        messageInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Replace symbol patterns with emojis
+                String input = s.toString();
+                String updatedInput = EmojiConverter.replaceWithEmojis(input);
+
+                // Avoid infinite loop by checking if text actually changed
+                if (!input.equals(updatedInput)) {
+                    messageInput.removeTextChangedListener(this); // Temporarily remove watcher
+                    messageInput.setText(updatedInput);
+                    messageInput.setSelection(updatedInput.length()); // Move cursor to end
+                    messageInput.addTextChangedListener(this); // Reattach watcher
+                }
+            }
+        });
 
         sendMessageBtn.setOnClickListener((v -> {
             String message = messageInput.getText().toString().trim();
