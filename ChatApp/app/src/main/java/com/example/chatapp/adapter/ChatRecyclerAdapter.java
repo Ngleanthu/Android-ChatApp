@@ -35,43 +35,61 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
-        Log.d("chat apd", "setupChatRecyclerView: " + currentUserId );
+        Log.d("chat apd", "setupChatRecyclerView: " + currentUserId);
         boolean isCurrentUser = model.getSenderId().equals(currentUserId);
+        Log.d("ChatRecyclerAdapter", "message: " + model.getMessage());
+
+        // Reset layouts to avoid duplicates
+        holder.rightChatLayout.removeAllViews();
+        holder.leftChatLayout.removeAllViews();
+
         if (isCurrentUser) {
-            // Nếu là tin nhắn của người dùng hiện tại
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatLayout.setVisibility(View.GONE);
-            holder.rightChatTextView.setText(model.getMessage());
+
+            // Add message text
+            TextView messageView = new TextView(context);
+            messageView.setText(model.getMessage());
+            holder.rightChatLayout.addView(messageView);
+
+            // Check for YouTube link and add WebView if necessary
+            if (containsYouTubeLink(model.getMessage())) {
+                Log.d("ChatRecyclerAdapter", "YouTube message: " + model.getMessage());
+                String videoId = extractYouTubeId(model.getMessage());
+                if (videoId != null) {
+                    addYouTubeWebView(holder.rightChatLayout, videoId, context);
+                }
+            }
         } else {
-            // Nếu là tin nhắn của người khác
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatLayout.setVisibility(View.GONE);
-            holder.leftChatTextView.setText(model.getMessage());
-        }
-        if (containsYouTubeLink(model.getMessage())) {
-            String videoId = extractYouTubeId(model.getMessage());
-            if (videoId != null) {
-                Log.d("ChatRecyclerAdapter", "Video ID: " + videoId);
 
-                LinearLayout layout= isCurrentUser ? holder.rightChatLayout : holder.leftChatLayout;
-                addYouTubeWebView(layout, videoId, holder.itemView.getContext());
+            // Add message text
+            TextView messageView = new TextView(context);
+            messageView.setText(model.getMessage());
+            holder.leftChatLayout.addView(messageView);
+
+            // Check for YouTube link and add WebView if necessary
+            if (containsYouTubeLink(model.getMessage())) {
+                Log.d("ChatRecyclerAdapter", "YouTube message: " + model.getMessage());
+                String videoId = extractYouTubeId(model.getMessage());
+                if (videoId != null) {
+                    addYouTubeWebView(holder.leftChatLayout, videoId, context);
+                }
             }
         }
 
-        // Chỉ cập nhật đã xem với tin nhắn mới nhất
+        // Handle seen/delivered text for the last message
         if (position == 0) {
             if (model.getSenderId().equals(currentUserId)) {
-                if(model.isSeen()) {
-                    // Nếu tin nhắn được gửi bởi người dùng hiện tại và đã được xem
+                if (model.isSeen()) {
                     holder.seenTextView.setVisibility(View.VISIBLE);
                     holder.seenTextView.setText("Seen");
-                }
-                else {
+                } else {
                     holder.seenTextView.setVisibility(View.VISIBLE);
                     holder.seenTextView.setText("Delivered");
                 }
-            }
-            else {
+            } else {
                 holder.seenTextView.setVisibility(View.GONE);
             }
         } else {
