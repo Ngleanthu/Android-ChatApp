@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.models.ChatMessageModel;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -38,6 +40,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
         Log.d("chat apd", "setupChatRecyclerView: " + currentUserId);
         boolean isCurrentUser = model.getSenderId().equals(currentUserId);
         Log.d("ChatRecyclerAdapter", "message: " + model.getMessage());
+        Log.d("ChatRecyclerAdapter", "message: " + model.getType());
 
         // Reset layouts to avoid duplicates
         holder.rightChatLayout.removeAllViews();
@@ -47,10 +50,17 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatLayout.setVisibility(View.GONE);
 
-            // Add message text
-            TextView messageView = new TextView(context);
-            messageView.setText(model.getMessage());
-            holder.rightChatLayout.addView(messageView);
+            if (model.getType() != null && model.getType().equals("image")) {
+                holder.rightChatTextView.setVisibility(View.GONE);
+                Log.d("ChatRecyclerAdapter", "Image message: " + model.getMessage());
+                addImageToLayout(holder.rightChatLayout, model.getMessage(), context);
+            } else {
+                // Add message text
+                TextView messageView = new TextView(context);
+
+                messageView.setText(model.getMessage());
+                holder.rightChatLayout.addView(messageView);
+            }
 
             // Check for YouTube link and add WebView if necessary
             if (containsYouTubeLink(model.getMessage())) {
@@ -64,10 +74,17 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatLayout.setVisibility(View.GONE);
 
-            // Add message text
-            TextView messageView = new TextView(context);
-            messageView.setText(model.getMessage());
-            holder.leftChatLayout.addView(messageView);
+            if (model.getType() != null &&  model.getType().equals("image")) {
+                holder.leftChatTextView.setVisibility(View.GONE);
+                addImageToLayout(holder.leftChatLayout, model.getMessage(), context);
+            } else {
+                // Add message text
+                TextView messageView = new TextView(context);
+                messageView.setText(model.getMessage());
+                holder.leftChatLayout.addView(messageView);
+            }
+
+
 
             // Check for YouTube link and add WebView if necessary
             if (containsYouTubeLink(model.getMessage())) {
@@ -83,6 +100,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
         if (position == 0) {
             if (model.getSenderId().equals(currentUserId)) {
                 if (model.isSeen()) {
+
                     holder.seenTextView.setVisibility(View.VISIBLE);
                     holder.seenTextView.setText("Seen");
                 } else {
@@ -119,4 +137,34 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             seenTextView = itemView.findViewById(R.id.seen_textview);
         }
     }
+
+
+    public static void addImageToLayout(LinearLayout parentLayout, String imageUrl, Context context) {
+        int width = (int) (300 * context.getResources().getDisplayMetrics().density);
+        int height = (int) (200 * context.getResources().getDisplayMetrics().density);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                width,
+                height
+        );
+
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            Log.e("ImageView", "Invalid image URL.");
+            return;
+        }
+
+        // Tạo một ImageView mới
+        ImageView imageView = new ImageView(context);
+        imageView.setLayoutParams(layoutParams);
+
+        Glide.with(context)
+                .load(imageUrl)
+                .placeholder(R.drawable.background_input)
+                .error(R.drawable.background_icon)
+                .into(imageView);
+
+        parentLayout.addView(imageView);
+    }
+
+
+
 }

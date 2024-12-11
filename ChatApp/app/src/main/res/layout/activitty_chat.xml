@@ -56,6 +56,7 @@
         android:layout_above="@id/bottom_layout"
         android:layout_below="@id/toolbar"
         android:layout_marginTop="-6dp"
+        android:foregroundGravity="center"
         android:layout_marginBottom="5dp" />
 
     <RelativeLayout
@@ -66,6 +67,16 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/bottom_layout">
 
+        <ImageButton
+            android:id="@+id/attachment_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/baseline_image_24"
+            android:foregroundGravity="center"
+            android:padding="8dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent" />
         <EditText
             android:id="@+id/chat_message_input"
             android:layout_width="match_parent"
@@ -80,6 +91,7 @@
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_13ssp"
             android:layout_toStartOf="@id/emoji_button"
+            android:layout_toEndOf="@id/attachment_button"
             />
         <ImageButton
             android:layout_width="48dp"
@@ -90,6 +102,7 @@
             android:layout_centerInParent="true"
             android:layout_toStartOf="@id/message_send_button"
             android:id="@+id/emoji_button"
+            android:background="@android:color/transparent"
             />
         <ImageButton
             android:layout_width="48dp"
@@ -97,10 +110,14 @@
             android:src="@drawable/baseline_send_24"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
+            android:scaleType="centerInside"
             android:id="@+id/message_send_button"
+            android:background="@android:color/transparent"
             />
+
     </RelativeLayout>
-<androidx.emoji2.emojipicker.EmojiPickerView
+
+    <androidx.emoji2.emojipicker.EmojiPickerView
     android:id="@+id/emoji_picker"
     android:layout_width="match_parent"
     android:layout_height="300dp"
@@ -109,5 +126,73 @@
     android:layout_alignParentBottom="true"
     />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/view_send_image"
+        android:visibility="gone"
+        android:orientation="vertical"
+        >
+
+        <!-- Tạo lớp overlay màu xám mờ -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80000000" /> <!-- Màu xám mờ -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="70dp"
+            android:layout_marginTop="200dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
+
+            <!-- ImageView nằm trên các Button -->
+            <ImageView
+                android:id="@+id/selected_image_view"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <!-- LinearLayout chứa 2 buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/cancel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:text="Cancel" />
+
+                <Button
+                    android:id="@+id/send_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Send" />
+
+
+
+            </LinearLayout>
+            <ProgressBar
+                android:id="@+id/progressBarImage"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:visibility="invisible"/>
+        </LinearLayout>
+
+    </FrameLayout>
 </RelativeLayout>
 

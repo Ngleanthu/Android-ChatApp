@@ -2,20 +2,24 @@ package com.example.chatapp.models;
 
 import com.google.firebase.Timestamp;
 
+import java.lang.reflect.Type;
+
 public class ChatMessageModel {
 private String message;
 private String senderId;
 private Timestamp timestamp;
 private boolean seen;
+private String type;
 
     public ChatMessageModel() {
     }
 
-    public ChatMessageModel(String message, String senderId, Timestamp timestamp) {
+    public ChatMessageModel(String message, String senderId, Timestamp timestamp, String type) {
         this.message = message;
         this.senderId = senderId;
         this.timestamp = timestamp;
         this.seen = false;
+        this.type = type;
     }
 
     public String getMessage() {
@@ -49,4 +53,12 @@ private boolean seen;
     public void setSeen(boolean seen) {
         this.seen = seen;
     }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 }
