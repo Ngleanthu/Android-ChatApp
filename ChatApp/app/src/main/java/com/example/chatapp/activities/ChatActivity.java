@@ -1,11 +1,20 @@
 package com.example.chatapp.activities;
 
+
 import static com.example.chatapp.utils.YoutubeUtil.containsYouTubeLink;
 
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
+
+import static com.example.chatapp.activities.MainActivity.MY_REQUEST_CODE;
+
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -14,14 +23,22 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.emoji2.emojipicker.EmojiPickerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,9 +64,13 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -68,10 +89,22 @@ public class ChatActivity extends AppCompatActivity {
     private FileHelper fileHelper;
     private PreferenceManager preferenceManager;
 
+    private static final org.apache.commons.logging.Log log = LogFactory.getLog(ChatActivity.class);
+
     UserModel otherUser;
     String chatroomId;
     ChatRoomModel chatRoomModel;
     String currentUserId; // Thêm biến lưu currentUserId
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+
+
+    FrameLayout viewSendImage;
+    String imageUrlSend;
+    Uri imageUriSend;
+    Button sendImageBtn;
+    Button cancelSenImageBtn;
+    ImageView imageSelected;
+    private ProgressBar progressBar;
 
 
     EditText messageInput;
@@ -85,25 +118,55 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ChatRecyclerAdapter adapter;
     ImageView imageProfile;
+    ImageButton cameraBtn;
 
     private ListenerRegistration messageListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activitty_chat);
-
-        preferenceManager = new PreferenceManager(getApplicationContext());
-
         messageInput = findViewById(R.id.chat_message_input);
         sendMessageBtn = findViewById(R.id.message_send_button);
         emojiBtn = findViewById(R.id.emoji_button);
         emojiPicker = findViewById(R.id.emoji_picker);
-        fileBtn = findViewById(R.id.file_button);
+        cameraBtn = findViewById(R.id.attachment_button);
         bottomLayout = findViewById(R.id.bottom_layout);
         backBtn = findViewById(R.id.back_btn);
         otherUsername = findViewById(R.id.other_username);
         recyclerView = findViewById(R.id.chat_recycler_view);
         imageProfile = findViewById(R.id.profile_pic_layout);
+        viewSendImage = findViewById(R.id.view_send_image);
+        sendImageBtn = findViewById(R.id.send_image_button);
+        cancelSenImageBtn = findViewById(R.id.cancel_button);
+        imageSelected = findViewById(R.id.selected_image_view);
+        progressBar = findViewById(R.id.progressBarImage);
+        fileBtn = findViewById(R.id.file_button);
+
+        preferenceManager = new PreferenceManager(getApplicationContext());
+
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Uri selectedImageUri = data.getData(); // Lấy URI của ảnh được chọn
+                            if (selectedImageUri != null) {
+
+                                viewSendImage.setVisibility(View.VISIBLE);
+                                Glide.with(this)
+                                        .load(selectedImageUri)
+                                        .placeholder(R.drawable.ic_default_profile_foreground) // Ảnh tạm
+                                        .into(imageSelected);
+                                imageUriSend = selectedImageUri; // Lưu URI ảnh
+                            }
+                        }
+                    } else {
+
+                        viewSendImage.setVisibility(View.GONE);
+                    }
+                }
+        );
 
         otherUser = AndroidUtil.getUserModelFromIntent(getIntent());
 
@@ -156,9 +219,29 @@ public class ChatActivity extends AppCompatActivity {
         sendMessageBtn.setOnClickListener((v -> {
             String message = messageInput.getText().toString().trim();
             if (!message.isEmpty()) {
-                sendMessageToUser(message); // Gửi tin nhắn
+                sendMessageToUser(message, "text"); // Gửi tin nhắn
             }
         }));
+
+        cancelSenImageBtn.setOnClickListener(v -> {
+            viewSendImage.setVisibility(View.GONE);
+        });
+
+        sendImageBtn.setOnClickListener((v -> {
+            loading(true);
+            uploadImageAndSaveToFirestore(new OnImageUploadCompleteListener() {
+                @Override
+                public void onImageUploadComplete(boolean success, String imageUrl) {
+                    if (success) {
+                        sendMessageToUser(imageUrl, "image");
+                        viewSendImage.setVisibility(View.GONE);
+                    } else {
+                        Log.e("ChatActivity Upload", "Failed to upload image");
+                    }
+                }
+            });
+        }));
+
 
         emojiBtn.setOnClickListener(v -> toggleEmojiPicker());
 
@@ -196,6 +279,12 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
         fileBtn.setOnClickListener(v -> fileHelper.selectFile("file"));
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickRequestPermission();
+            }
+        });
     }
     void setupChatRecyclerView(){
         Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
@@ -215,22 +304,22 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.startListening();
     }
-    void sendMessageToUser(String message) {
+    void sendMessageToUser(String message, String type) {
         if (currentUserId != null) { // Đảm bảo currentUserId đã có giá trị
             chatRoomModel.setLastMessageSenderId(currentUserId);
             chatRoomModel.setLastMessageTimestamp(Timestamp.now());
             chatRoomModel.setLastMessage(message);
             chatRoomModel.setLastMessageSeen(false);
+            chatRoomModel.setType(type);
             FirebaseUtil.getChatroomReference(chatroomId).set(chatRoomModel);
-
-            ChatMessageModel chatMessageModel = new ChatMessageModel(message, currentUserId, Timestamp.now());
+            ChatMessageModel chatMessageModel = new ChatMessageModel(message, currentUserId, Timestamp.now(), type);
             FirebaseUtil.getChatroomMessagesReference(chatroomId).add(chatMessageModel)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             messageInput.setText(""); // Clear input
                             sendNotification(message);
                         } else {
-                            Log.e("ChatActivity", "Failed to send message.");
+                            Log.e("ChatActivity send message", "Failed to send message.");
                         }
                     });
         }
@@ -242,7 +331,7 @@ public class ChatActivity extends AppCompatActivity {
                 chatRoomModel = task.getResult().toObject(ChatRoomModel.class);
                 if (chatRoomModel == null) {
                     List<String> userIds = Arrays.asList(currentUserId, otherUser.getUserId());
-                    chatRoomModel = new ChatRoomModel(chatroomId, userIds, Timestamp.now(), "");
+                    chatRoomModel = new ChatRoomModel(chatroomId, userIds, Timestamp.now(), "", "text");
 
                     FirebaseUtil.getChatroomReference(chatroomId).set(chatRoomModel);
                 }
@@ -541,5 +630,104 @@ public class ChatActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    // choose image form gallery
+
+    private void onClickRequestPermission() {
+
+        // từ android 6 trở xuống thì không cần request permission
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            openGallery();
+            return;
+        }
+
+        if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            openGallery();
+        } else {
+            String[] permission = {android.Manifest.permission.READ_EXTERNAL_STORAGE};
+            requestPermissions(permission, MY_REQUEST_CODE);
+        }
+
+
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MainActivity.MY_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openGallery();
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        activityResultLauncher.launch(Intent.createChooser(intent, "Select Picture"));
+    }
+
+    private void uploadImageAndSaveToFirestore(final OnImageUploadCompleteListener listener) {
+        // Firebase Storage reference
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference();
+
+        // Kiểm tra giá trị của imageUri
+        if (imageUriSend == null) {
+            return; // Không làm gì thêm nếu imageUriSend là null
+        } else {
+            Log.d("Upload", "Image URI: " + imageUriSend.toString());
+        }
+
+        // Tạo tên file duy nhất dựa trên timestamp hoặc UUID
+        String fileName = "chatrooms/" + chatroomId + "/images/image_" + System.currentTimeMillis();
+        StorageReference imageRef = storageReference.child(fileName);
+
+        // Tải ảnh từ imageUriSend lên Firebase Storage
+        imageRef.putFile(imageUriSend)
+                .addOnSuccessListener(taskSnapshot -> {
+                    // Sau khi upload thành công, lấy URL của hình ảnh
+                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String imageUrl = uri.toString();
+                        Log.d("Upload IMAGE LEN STORE", "Image URL: " + imageUrl);
+                        imageUrlSend = imageUrl;
+
+                        // Gọi listener để thông báo hoàn tất
+                        if (listener != null) {
+                            listener.onImageUploadComplete(true, imageUrl);  // Thông báo upload thành công
+                        }
+
+                        // Gửi thông báo thành công
+                        Toast.makeText(getApplicationContext(), "Upload success", Toast.LENGTH_SHORT).show();
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    // Xử lý khi tải ảnh thất bại
+                    Log.e("Upload", "Upload failed", e);
+                    if (listener != null) {
+                        listener.onImageUploadComplete(false, null);  // Thông báo upload thất bại
+                    }
+                    Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    // Định nghĩa interface cho callback
+    public interface OnImageUploadCompleteListener {
+        void onImageUploadComplete(boolean success, String imageUrl);
+    }
+
+    private void loading(Boolean isLoading){
+        if(isLoading){
+            cancelSenImageBtn.setVisibility(View.INVISIBLE);
+            sendImageBtn.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        else {
+            progressBar.setVisibility(View.INVISIBLE);
+        }
     }
 }

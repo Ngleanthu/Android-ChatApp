@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
         android:background="@color/primary"
-      android:id="@+id/toolbar"  >
+        android:id="@+id/toolbar"  >
 
         <TextView
             android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
             android:textSize="22sp"
             android:layout_marginStart="10sp"
             android:layout_toRightOf="@id/back_btn"
-           />
+            />
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -56,7 +56,6 @@
         android:textSize="@dimen/_13ssp"
         android:layout_marginHorizontal="15dp"
         android:layout_toLeftOf="@id/search_user_btn"
-
         />
     <ImageButton
         android:layout_width="wrap_content"
@@ -75,7 +74,6 @@
     android:layout_below="@id/search_user_layout"
     android:padding="10dp"
     android:id="@+id/search_user_recycler_view"
-
-    />
+        />
 
 </RelativeLayout>

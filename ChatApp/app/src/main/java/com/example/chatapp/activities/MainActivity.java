@@ -16,6 +16,7 @@ import android.os.Build;
 
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -42,6 +43,7 @@ import com.example.chatapp.utils.PreferenceManager;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 
@@ -88,6 +90,29 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("signOut", false)) {
             signOut();
         }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        boolean isUpdateRun = false; // Cờ kiểm soát chạy tạm một lần
+
+        if (!isUpdateRun) {
+            db.collection("chats")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                db.collection("chats").document(document.getId())
+                                        .update("type", "text") // Giá trị mặc định
+                                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "Document updated: " + document.getId()))
+                                        .addOnFailureListener(e -> Log.e("Firestore", "Error updating document", e));
+                            }
+                            Log.d("Firestore", "Update complete!");
+                        } else {
+                            Log.e("Firestore", "Error fetching documents", task.getException());
+                        }
+                    });
+            isUpdateRun = true; // Cập nhật trạng thái sau khi chạy
+        }
+
 
 
     }
