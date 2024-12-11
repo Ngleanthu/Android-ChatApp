@@ -65,12 +65,22 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/bottom_layout">
 
+        <ImageButton
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/baseline_attach_file_24"
+            android:paddingEnd="@dimen/_16sdp"
+            android:paddingStart="@dimen/_16sdp"
+            android:layout_centerVertical="true"
+            android:id="@+id/file_button"
+            />
+
         <EditText
             android:id="@+id/chat_message_input"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
-            android:layout_marginHorizontal="15dp"
-            android:background="@drawable/background_input"
+            android:layout_marginHorizontal="8dp"
+            android:background="@android:color/transparent"
             android:hint="Write message"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -79,10 +89,11 @@
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_13ssp"
             android:layout_toStartOf="@id/emoji_button"
+            android:layout_toEndOf="@id/file_button"
             />
         <ImageButton
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="@drawable/baseline_emoji_emotions_24"
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
@@ -91,8 +102,8 @@
             android:id="@+id/emoji_button"
             />
         <ImageButton
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:background="@drawable/baseline_send_24"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"

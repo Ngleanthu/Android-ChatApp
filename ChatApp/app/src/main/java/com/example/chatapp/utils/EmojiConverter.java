@@ -10,7 +10,7 @@ public class EmojiConverter {
 
     static {
         emojiMap.put("O:)", "\uD83D\uDE07");
-        emojiMap.put(":)", "\uD83D\uDE00");
+        emojiMap.put(":)", "\uD83D\uDE42");
         emojiMap.put(":(", "\uD83D\uDE1E");
         emojiMap.put(";)", "\uD83D\uDE09");
         emojiMap.put(":D", "\uD83D\uDE03");
