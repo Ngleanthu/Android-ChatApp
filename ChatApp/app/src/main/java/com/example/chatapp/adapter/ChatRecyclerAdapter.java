@@ -5,6 +5,8 @@ import static com.example.chatapp.utils.YoutubeUtil.extractYouTubeId;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,12 +30,18 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
     private final Context context;
     private final String currentUserId;  // Khai báo biến thành viên
+    private OnFileClickListener fileClickListener;
+
+    public interface OnFileClickListener {
+        void onFileClick(String fileName);
+    }
 
     // Constructor có thêm currentUserId
-    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatMessageModel> options, Context context, String currentUserId) {
+    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatMessageModel> options, Context context, String currentUserId, OnFileClickListener listener) {
         super(options);
         this.context = context;
         this.currentUserId = currentUserId;  //000 Lưu giá trị vào biến thành viên
+        this.fileClickListener = listener;
     }
 
     @Override
@@ -50,15 +59,28 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatLayout.setVisibility(View.GONE);
 
+
             if (model.getType() != null && model.getType().equals("image")) {
                 holder.rightChatTextView.setVisibility(View.GONE);
                 Log.d("ChatRecyclerAdapter", "Image message: " + model.getMessage());
                 addImageToLayout(holder.rightChatLayout, model.getMessage(), context);
             } else {
-                // Add message text
+               // Add message text
                 TextView messageView = new TextView(context);
+                messageView.setTextColor(ContextCompat.getColor(context, R.color.white_color));
 
-                messageView.setText(model.getMessage());
+                // If user send file
+                if (model.getFileUrl() != null) {
+                    holder.rightChatLayout.setVisibility(View.VISIBLE);
+                    messageView.setText((model.getFileUrl()));
+                    holder.rightChatLayout.setOnClickListener(v -> {
+                        if (fileClickListener != null) {
+                            fileClickListener.onFileClick(model.getFileUrl());
+                        }
+                    });
+                }else {
+                    messageView.setText(model.getMessage());
+                }
                 holder.rightChatLayout.addView(messageView);
             }
 
@@ -70,6 +92,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                     addYouTubeWebView(holder.rightChatLayout, videoId, context);
                 }
             }
+
         } else {
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatLayout.setVisibility(View.GONE);
@@ -80,11 +103,22 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             } else {
                 // Add message text
                 TextView messageView = new TextView(context);
-                messageView.setText(model.getMessage());
+                messageView.setTextColor(ContextCompat.getColor(context, R.color.dark));
+
+                // If user send file
+                if (model.getFileUrl() != null) {
+                    holder.leftChatLayout.setVisibility(View.VISIBLE);
+                    messageView.setText((model.getFileUrl()));
+                    holder.leftChatLayout.setOnClickListener(v -> {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(model.getFileUrl()));
+                        context.startActivity(intent);
+                    });
+                }else {
+                    messageView.setText(model.getMessage());
+                }
+
                 holder.leftChatLayout.addView(messageView);
             }
-
-
 
             // Check for YouTube link and add WebView if necessary
             if (containsYouTubeLink(model.getMessage())) {

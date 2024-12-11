@@ -48,13 +48,8 @@ public class FirebaseUtil {
         });
     }
 
-    public static String currentUserId(Context context){
-        PreferenceManager preferenceManager = new PreferenceManager(context);
-        return preferenceManager.getString(Constants.KEY_USER_ID);
-    }
-
-    public static DocumentReference currentUserDetails(Context context){
-        return FirebaseFirestore.getInstance().collection("users").document(currentUserId(context));
+    public static DocumentReference currentUserDetails(String userId){
+        return FirebaseFirestore.getInstance().collection("users").document(userId);
     }
     public static CollectionReference allUserCollectionReference() {
         return FirebaseFirestore.getInstance().collection("users");
