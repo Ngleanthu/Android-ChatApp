@@ -8,12 +8,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 
-import static com.example.chatapp.activities.MainActivity.MY_REQUEST_CODE;
-
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,7 +24,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,8 +31,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.emoji2.emojipicker.EmojiPickerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,13 +56,9 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -89,12 +77,11 @@ public class ChatActivity extends AppCompatActivity {
     private FileHelper fileHelper;
     private PreferenceManager preferenceManager;
 
-    private static final org.apache.commons.logging.Log log = LogFactory.getLog(ChatActivity.class);
-
     UserModel otherUser;
     String chatroomId;
     ChatRoomModel chatRoomModel;
     String currentUserId; // Thêm biến lưu currentUserId
+    String currentUserName;
     private ActivityResultLauncher<Intent> activityResultLauncher;
 
 
@@ -144,32 +131,42 @@ public class ChatActivity extends AppCompatActivity {
 
         preferenceManager = new PreferenceManager(getApplicationContext());
 
-        activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            Uri selectedImageUri = data.getData(); // Lấy URI của ảnh được chọn
-                            if (selectedImageUri != null) {
-
-                                viewSendImage.setVisibility(View.VISIBLE);
-                                Glide.with(this)
-                                        .load(selectedImageUri)
-                                        .placeholder(R.drawable.ic_default_profile_foreground) // Ảnh tạm
-                                        .into(imageSelected);
-                                imageUriSend = selectedImageUri; // Lưu URI ảnh
-                            }
+        fileHelper = new FileHelper(
+                this,
+                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri fileUri = result.getData().getData();
+                        if (fileUri != null) {
+                            String mimeType = getContentResolver().getType(fileUri);
+                            Log.d("mimeType", mimeType);
+                            String type = FileHelper.determineFileType(mimeType);
+                            Log.d("fileType", type);
+                            handleFileSelection(fileUri, type);
                         }
-                    } else {
-
-                        viewSendImage.setVisibility(View.GONE);
                     }
-                }
-        );
+                }),
+                registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                    boolean allGranted = result.values().stream().allMatch(granted -> granted);
+                    if (!allGranted) {
+                        Toast.makeText(this, "Permission required to access storage!", Toast.LENGTH_SHORT).show();
+                    }
+                }),
+                new FileHelper.FileHelperCallback() {
+                    @Override
+                    public void onFileSelected(Uri fileUri) {
+                        Toast.makeText(ChatActivity.this, "File selected: " + fileUri, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(String type) {
+                        Toast.makeText(ChatActivity.this,
+                                "Permission required to select " + type + "!", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         otherUser = AndroidUtil.getUserModelFromIntent(getIntent());
 
+        currentUserName = preferenceManager.getString(Constants.KEY_NAME);
         currentUserId = preferenceManager.getString(Constants.KEY_USER_ID);
         chatroomId = FirebaseUtil.getChatroomId(currentUserId, otherUser.getUserId());
         getOrCreateChatroomModel();
@@ -219,7 +216,7 @@ public class ChatActivity extends AppCompatActivity {
         sendMessageBtn.setOnClickListener((v -> {
             String message = messageInput.getText().toString().trim();
             if (!message.isEmpty()) {
-                sendMessageToUser(message, "text"); // Gửi tin nhắn
+                sendMessageToUser(message, null, null,"text"); // Gửi tin nhắn
             }
         }));
 
@@ -233,7 +230,7 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void onImageUploadComplete(boolean success, String imageUrl) {
                     if (success) {
-                        sendMessageToUser(imageUrl, "image");
+                        sendMessageToUser(currentUserName + " sent a photo", imageUrl, null,"image");
                         viewSendImage.setVisibility(View.GONE);
                     } else {
                         Log.e("ChatActivity Upload", "Failed to upload image");
@@ -250,41 +247,9 @@ public class ChatActivity extends AppCompatActivity {
             messageInput.requestFocus();
         });
 
-        fileHelper = new FileHelper(
-                this,
-                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        Uri fileUri = result.getData().getData();
-                        if (fileUri != null) {
-                            handleFileSelection(fileUri);
-                        }
-                    }
-                }),
-                registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
-                    boolean allGranted = result.values().stream().allMatch(granted -> granted);
-                    if (!allGranted) {
-                        Toast.makeText(this, "Permission required to access storage!", Toast.LENGTH_SHORT).show();
-                    }
-                }),
-                new FileHelper.FileHelperCallback() {
-                    @Override
-                    public void onFileSelected(Uri fileUri) {
-                        Toast.makeText(ChatActivity.this, "File selected: " + fileUri, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(String type) {
-                        Toast.makeText(ChatActivity.this,
-                                "Permission required to select " + type + "!", Toast.LENGTH_SHORT).show();
-                    }
-                });
         fileBtn.setOnClickListener(v -> fileHelper.selectFile("file"));
-        cameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickRequestPermission();
-            }
-        });
+        cameraBtn.setOnClickListener(v-> fileHelper.selectFile("image"));
+
     }
     void setupChatRecyclerView(){
         Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
@@ -304,7 +269,7 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.startListening();
     }
-    void sendMessageToUser(String message, String type) {
+    void sendMessageToUser(String message, String fileUrl, String fileName, String type) {
         if (currentUserId != null) { // Đảm bảo currentUserId đã có giá trị
             chatRoomModel.setLastMessageSenderId(currentUserId);
             chatRoomModel.setLastMessageTimestamp(Timestamp.now());
@@ -312,7 +277,7 @@ public class ChatActivity extends AppCompatActivity {
             chatRoomModel.setLastMessageSeen(false);
             chatRoomModel.setType(type);
             FirebaseUtil.getChatroomReference(chatroomId).set(chatRoomModel);
-            ChatMessageModel chatMessageModel = new ChatMessageModel(message, currentUserId, Timestamp.now(), type);
+            ChatMessageModel chatMessageModel = new ChatMessageModel(message, currentUserId, fileUrl, fileName, Timestamp.now(), type);
             FirebaseUtil.getChatroomMessagesReference(chatroomId).add(chatMessageModel)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -556,119 +521,68 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void handleFileSelection(Uri fileUri) {
-        String fileName = FileHelper.getFileName(this, fileUri);
-        Log.d("FileSelection", "File Selected: " + fileUri);
+    private void handleFileSelection(Uri fileUri, String type) {
+        String message = currentUserName + " sent an attachment";
+        if (type.equals("file")) {
+            String fileName = FileHelper.getFileName(this, fileUri);
+            Log.d("FileSelection", "File Selected: " + fileUri);
 
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference fileRef = storageReference.child("chatrooms/" + chatroomId + "/files/" + fileName);
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+            StorageReference fileRef = storageReference.child("chatrooms/" + chatroomId + "/files/" + fileName);
 
-        fileRef.putFile(fileUri)
-                .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    // Get the file URL
-                    sendMessageWithFile(fileName);
-                }))
-                .addOnFailureListener(e -> Toast.makeText(this, "File upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
-
-    private void sendMessageWithFile(String fileName) {
-        String message = preferenceManager.getString(Constants.KEY_NAME) + " sent an attachment";
-        if (currentUserId != null) { // Đảm bảo currentUserId đã có giá trị
-            chatRoomModel.setLastMessageSenderId(currentUserId);
-            chatRoomModel.setLastMessageTimestamp(Timestamp.now());
-            chatRoomModel.setLastMessage(message);
-            chatRoomModel.setLastMessageSeen(false);
-            FirebaseUtil.getChatroomReference(chatroomId).set(chatRoomModel);
-
-            ChatMessageModel chatMessageModel = new ChatMessageModel(message, currentUserId, fileName, Timestamp.now());
-            FirebaseUtil.getChatroomMessagesReference(chatroomId).add(chatMessageModel)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            sendNotification(message);
-                        } else {
-                            Log.e("ChatActivity", "Failed to send message.");
-                        }
-                    });
+            fileRef.putFile(fileUri)
+                    .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(fileUrl -> {
+                        // Pass the file URL to sendMessageToUser
+                        sendMessageToUser(message, fileUrl.toString(), fileName, type);
+                    }))
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "File upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        }else if(type.equals("image")){
+            viewSendImage.setVisibility(View.VISIBLE);
+            Glide.with(this)
+                    .load(fileUri)
+                    .placeholder(R.drawable.ic_default_profile_foreground) // Ảnh tạm
+                    .into(imageSelected);
+            imageUriSend = fileUri; // Lưu URI ảnh
+        }else {
+            Toast.makeText(this, "Unsupported type: " + type, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void onFileClick(String fileName) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Download File")
-                .setMessage("Do you want to download this file?")
-                .setPositiveButton("Download", (dialog, which) -> downloadFile(fileName))
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .show();
-    }
+private void onFileClick(String fileUrl, String fileName) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Download File")
+            .setMessage("Do you want to download this file?")
+            .setPositiveButton("Download", (dialog, which) -> downloadFile(fileUrl, fileName))
+            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+            .show();
+}
 
-    private void downloadFile(String fileName) {
-        if (fileName == null) return;
+    private void downloadFile(String fileUrl, String fileName) {
+        if (fileUrl == null) return;
 
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference fileRef = storageReference.child("chatrooms/" + chatroomId + "/files/" + fileName);
+        try {
+            Uri fileUri = Uri.parse(fileUrl); // Parse the file URL into a URI
 
-        // Get the download URL
-        fileRef.getDownloadUrl()
-                .addOnSuccessListener(uri -> {
-                    // Use DownloadManager to download the file
-                    DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                    if (downloadManager == null) {
-                        Toast.makeText(this, "Download Manager not available", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    DownloadManager.Request request = new DownloadManager.Request(uri);
-                    request.setTitle("Downloading " + fileName);
-                    request.setDescription("File is being downloaded...");
-                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName); // Save to Downloads folder
-                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-                    // Enqueue the download
-                    downloadManager.enqueue(request);
-                    Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    // choose image form gallery
-
-    private void onClickRequestPermission() {
-
-        // từ android 6 trở xuống thì không cần request permission
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            openGallery();
-            return;
-        }
-
-        if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            openGallery();
-        } else {
-            String[] permission = {android.Manifest.permission.READ_EXTERNAL_STORAGE};
-            requestPermissions(permission, MY_REQUEST_CODE);
-        }
-
-
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MainActivity.MY_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openGallery();
-            } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+            // Use DownloadManager to download the file
+            DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+            if (downloadManager == null) {
+                Toast.makeText(this, "Download Manager not available", Toast.LENGTH_SHORT).show();
+                return;
             }
-        }
-    }
 
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        activityResultLauncher.launch(Intent.createChooser(intent, "Select Picture"));
+            DownloadManager.Request request = new DownloadManager.Request(fileUri);
+            request.setTitle((fileName != null ? fileName : "file"));
+            request.setDescription("File is being downloaded...");
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName != null ? fileName : "unknown_file"); // Save to Downloads folder
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+            // Enqueue the download
+            downloadManager.enqueue(request);
+            Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error downloading file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void uploadImageAndSaveToFirestore(final OnImageUploadCompleteListener listener) {
