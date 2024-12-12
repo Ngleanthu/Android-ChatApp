@@ -1,60 +1,54 @@
 package com.example.chatapp.activities;
 
-import static com.example.chatapp.activities.MainActivity.MY_REQUEST_CODE;
-
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+import android.app.DatePickerDialog;
 import android.net.Uri;
-import android.os.Build;
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Patterns;
+
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TableRow;
 
-import android.provider.MediaStore;
 
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chatapp.R;
 import com.example.chatapp.utils.Constants;
+import com.example.chatapp.utils.FileHelper;
 import com.example.chatapp.utils.PreferenceManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+
 
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.bumptech.glide.Glide;
-import androidx.annotation.NonNull;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 
 
 
 
 public class UpdateProfileActivity extends AppCompatActivity {
+    private FileHelper fileHelper;
     private EditText profileName, profileBirthdate, profileNewPassword, profileConfirmPassword, profileRecentPassword;
     private ImageButton btnBack;
     private PreferenceManager preferenceManager;
@@ -68,8 +62,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private Uri imageUri;
     private String userId;
 
-
-    private ActivityResultLauncher<Intent> activityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,27 +90,54 @@ public class UpdateProfileActivity extends AppCompatActivity {
         getInfoUser();
         initListener();
         profileEmail = findViewById(R.id.profileEmail);
+        profileBirthdate.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Khởi tạo ActivityResultLauncher
-        activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            Uri uri = data.getData();
-                            if (uri != null) {
+            DatePickerDialog datePicker = new DatePickerDialog(
+                    UpdateProfileActivity.this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
+                        profileBirthdate.setText(selectedDate);
+                    },
+                    year, month, day
+            );
+            datePicker.show();
+        });
 
-                                // Hiển thị ảnh từ Uri trực tiếp lên ImageView
-                                imageProfile.setImageURI(uri);
-                                // lưu lại uri
-                                imageUri = uri;
-                            }
+
+        fileHelper = new FileHelper(
+                this,
+                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri fileUri = result.getData().getData();
+                        if (fileUri != null) {
+                            imageProfile.setImageURI(fileUri);
+                            // lưu lại uri
+                            imageUri = fileUri;
                         }
                     }
-                }
-        );
+                }),
+                registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                    boolean allGranted = result.values().stream().allMatch(granted -> granted);
+                    if (!allGranted) {
+                        Toast.makeText(this, "Permission required to access storage!", Toast.LENGTH_SHORT).show();
+                    }
+                }),
+                new FileHelper.FileHelperCallback() {
+                    @Override
+                    public void onFileSelected(Uri fileUri) {
+                        Toast.makeText(UpdateProfileActivity.this, "File selected: " + fileUri, Toast.LENGTH_SHORT).show();
+                    }
 
+                    @Override
+                    public void onPermissionDenied(String type) {
+                        Toast.makeText(UpdateProfileActivity.this,
+                                "Permission required to select " + type + "!", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         profileNewPassword.addTextChangedListener(new TextWatcher() {
             @Override
@@ -161,12 +180,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     }
 
     private void initListener() {
-        imageProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickRequestPermission();
-            }
-        });
+        imageProfile.setOnClickListener(v-> fileHelper.selectFile("image"));
 
         // Thiết lập sự kiện click cho nút Back
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -193,43 +207,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void onClickRequestPermission() {
-
-        // từ android 6 trở xuống thì không cần request permission
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            openGallery();
-            return;
-        }
-
-        if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            openGallery();
-        } else {
-            String[] permission = {android.Manifest.permission.READ_EXTERNAL_STORAGE};
-            requestPermissions(permission, MY_REQUEST_CODE);
-        }
-
-
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MainActivity.MY_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openGallery();
-            } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        activityResultLauncher.launch(Intent.createChooser(intent, "Select Picture"));
     }
 
     private void uploadImageAndSaveToFirestore(String name, String birthdate, String newPassword) {
