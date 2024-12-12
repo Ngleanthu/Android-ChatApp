@@ -75,7 +75,6 @@ dependencies {
     // load image from url
     implementation ("com.github.bumptech.glide:glide:4.11.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
-    implementation ("com.squareup.picasso:picasso:2.71828")
     //
     implementation ("androidx.activity:activity-ktx:1.2.0")
 

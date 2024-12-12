@@ -523,7 +523,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void handleFileSelection(Uri fileUri, String type) {
         String message = currentUserName + " sent an attachment";
-        if (type.equals("file")) {
+        if (type.equals("file") || type.equals("video")) {
             String fileName = FileHelper.getFileName(this, fileUri);
             Log.d("FileSelection", "File Selected: " + fileUri);
 

@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="ChatApp.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-10T06:49:39.874708500Z">
+        <DropdownSelection timestamp="2024-12-12T14:09:21.507406500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\MSI GF63\.android\avd\Medium_Phone_API_35.avd" />
