@@ -64,11 +64,7 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
                                 holder.usernameText.setText(otherUserModel.getName());
                                 String lastMessage = model.getLastMessage();
                                 String formattedLastMessage;
-                                if(model.getType() != null && model.getType().equals("image")){
-                                     formattedLastMessage = "image";
-                                }else{
-                                    formattedLastMessage = FirebaseUtil.formatLastMessage(lastMessage);
-                                }
+                                formattedLastMessage = FirebaseUtil.formatLastMessage(lastMessage);
                                 boolean lastMessageSendByMe = model.getLastMessageSenderId().equals(currentUserId);
 
                                 // Notify user if they haven't seen latest messages

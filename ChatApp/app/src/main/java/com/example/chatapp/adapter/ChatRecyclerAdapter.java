@@ -30,10 +30,10 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
     private final Context context;
     private final String currentUserId;  // Khai báo biến thành viên
-    private OnFileClickListener fileClickListener;
+    private final OnFileClickListener fileClickListener;
 
     public interface OnFileClickListener {
-        void onFileClick(String fileName);
+        void onFileClick(String fileUrl, String fileName);
     }
 
     // Constructor có thêm currentUserId
@@ -59,28 +59,26 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatLayout.setVisibility(View.GONE);
 
-
             if (model.getType() != null && model.getType().equals("image")) {
-                holder.rightChatTextView.setVisibility(View.GONE);
-                Log.d("ChatRecyclerAdapter", "Image message: " + model.getMessage());
-                addImageToLayout(holder.rightChatLayout, model.getMessage(), context);
-            } else {
-               // Add message text
+                Log.d("ChatRecyclerAdapter", "Image message: " + model.getFileUrl());
+                addImageToLayout(holder.rightChatLayout, model.getFileUrl(), context);
+            } else if (model.getType() != null && model.getType().equals("file")){
+                // If user send file
+                // Add message text
                 TextView messageView = new TextView(context);
                 messageView.setTextColor(ContextCompat.getColor(context, R.color.white_color));
+                messageView.setText((model.getFileName()));
+                messageView.setOnClickListener(v -> {
+                    if (fileClickListener != null) {
+                        fileClickListener.onFileClick(model.getFileUrl(), model.getFileName());
+                    }
+                });
+                holder.rightChatLayout.addView(messageView);
 
-                // If user send file
-                if (model.getFileUrl() != null) {
-                    holder.rightChatLayout.setVisibility(View.VISIBLE);
-                    messageView.setText((model.getFileUrl()));
-                    holder.rightChatLayout.setOnClickListener(v -> {
-                        if (fileClickListener != null) {
-                            fileClickListener.onFileClick(model.getFileUrl());
-                        }
-                    });
-                }else {
-                    messageView.setText(model.getMessage());
-                }
+            }else {
+                TextView messageView = new TextView(context);
+                messageView.setTextColor(ContextCompat.getColor(context, R.color.white_color));
+                messageView.setText(model.getMessage());
                 holder.rightChatLayout.addView(messageView);
             }
 
@@ -98,25 +96,24 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.rightChatLayout.setVisibility(View.GONE);
 
             if (model.getType() != null &&  model.getType().equals("image")) {
-                holder.leftChatTextView.setVisibility(View.GONE);
-                addImageToLayout(holder.leftChatLayout, model.getMessage(), context);
-            } else {
+                addImageToLayout(holder.leftChatLayout, model.getFileUrl(), context);
+            } else if (model.getType() != null && model.getType().equals("file")){
+                // If user send file
                 // Add message text
                 TextView messageView = new TextView(context);
                 messageView.setTextColor(ContextCompat.getColor(context, R.color.dark));
+                messageView.setText((model.getFileName()));
+                messageView.setOnClickListener(v -> {
+                    if (fileClickListener != null) {
+                        fileClickListener.onFileClick(model.getFileUrl(), model.getFileName());
+                    }
+                });
+                holder.leftChatLayout.addView(messageView);
 
-                // If user send file
-                if (model.getFileUrl() != null) {
-                    holder.leftChatLayout.setVisibility(View.VISIBLE);
-                    messageView.setText((model.getFileUrl()));
-                    holder.leftChatLayout.setOnClickListener(v -> {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(model.getFileUrl()));
-                        context.startActivity(intent);
-                    });
-                }else {
-                    messageView.setText(model.getMessage());
-                }
-
+            }else {
+                TextView messageView = new TextView(context);
+                messageView.setTextColor(ContextCompat.getColor(context, R.color.dark));
+                messageView.setText(model.getMessage());
                 holder.leftChatLayout.addView(messageView);
             }
 

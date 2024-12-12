@@ -8,6 +8,7 @@ public class ChatMessageModel {
 private String message;
 private String senderId;
 private String fileUrl;
+private String fileName;
 private Timestamp timestamp;
 private boolean seen;
 private String type;
@@ -23,12 +24,14 @@ private String type;
         this.type = type;
     }
 
-    public ChatMessageModel(String message, String senderId, String fileUrl, Timestamp timestamp) {
+    public ChatMessageModel(String message, String senderId, String fileUrl, String fileName, Timestamp timestamp, String type) {
         this.message = message;
         this.senderId = senderId;
         this.fileUrl = fileUrl;
+        this.fileName = fileName;
         this.timestamp = timestamp;
         this.seen = false;
+        this.type = type;
     }
 
     public String getMessage() {
@@ -69,6 +72,14 @@ private String type;
 
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public String getType() {

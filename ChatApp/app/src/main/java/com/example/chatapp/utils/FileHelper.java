@@ -13,7 +13,6 @@ import android.os.Build;
 import android.provider.OpenableColumns;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.io.File;
@@ -142,5 +141,17 @@ public class FileHelper {
         }
 
         return fileName;
+    }
+
+    public static String determineFileType(String mimeType) {
+        if (mimeType == null) return "file";
+
+        if (mimeType.startsWith("image/")) {
+            return "image";
+        } else if (mimeType.startsWith("video/")) {
+            return "video";
+        } else {
+            return "file";
+        }
     }
 }
