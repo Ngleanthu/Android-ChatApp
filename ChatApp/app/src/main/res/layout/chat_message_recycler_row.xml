@@ -25,6 +25,7 @@
             android:id="@+id/left_chat_textview"
 
             />
+
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"

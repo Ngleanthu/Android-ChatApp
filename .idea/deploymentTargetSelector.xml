@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="ChatApp.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-10-21T16:30:50.645367100Z">
+        <DropdownSelection timestamp="2024-12-10T06:49:39.874708500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=LMV409N2666ace7" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\MSI GF63\.android\avd\Medium_Phone_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>
