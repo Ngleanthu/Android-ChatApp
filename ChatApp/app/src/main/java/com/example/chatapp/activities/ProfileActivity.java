@@ -2,15 +2,12 @@ package com.example.chatapp.activities;
 
 import android.content.Intent;
 
-import android.net.Uri;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,7 +23,6 @@ public class ProfileActivity extends AppCompatActivity {
     ImageButton btnBack;
     PreferenceManager preferenceManager;
     ImageView imageProfile;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

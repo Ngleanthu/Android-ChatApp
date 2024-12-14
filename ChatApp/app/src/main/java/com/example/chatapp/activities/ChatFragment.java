@@ -14,14 +14,11 @@ import android.view.ViewGroup;
 
 import com.example.chatapp.R;
 import com.example.chatapp.adapter.RecentCharRecyclerAdapter;
-import com.example.chatapp.adapter.SearchUserRecyclerAdapter;
 import com.example.chatapp.models.ChatRoomModel;
-import com.example.chatapp.models.UserModel;
 import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.FirebaseUtil;
 import com.example.chatapp.utils.PreferenceManager;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 

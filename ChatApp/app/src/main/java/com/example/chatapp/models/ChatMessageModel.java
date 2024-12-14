@@ -7,6 +7,8 @@ import java.lang.reflect.Type;
 public class ChatMessageModel {
 private String message;
 private String senderId;
+private String fileUrl;
+private String fileName;
 private Timestamp timestamp;
 private boolean seen;
 private String type;
@@ -17,6 +19,16 @@ private String type;
     public ChatMessageModel(String message, String senderId, Timestamp timestamp, String type) {
         this.message = message;
         this.senderId = senderId;
+        this.timestamp = timestamp;
+        this.seen = false;
+        this.type = type;
+    }
+
+    public ChatMessageModel(String message, String senderId, String fileUrl, String fileName, Timestamp timestamp, String type) {
+        this.message = message;
+        this.senderId = senderId;
+        this.fileUrl = fileUrl;
+        this.fileName = fileName;
         this.timestamp = timestamp;
         this.seen = false;
         this.type = type;
@@ -53,6 +65,23 @@ private String type;
     public void setSeen(boolean seen) {
         this.seen = seen;
     }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     public String getType() {
         return type;
     }

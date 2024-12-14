@@ -26,8 +26,8 @@
             android:layout_marginLeft="10dp"
             />
         <com.makeramen.roundedimageview.RoundedImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginStart="10dp"
             android:layout_toRightOf="@id/back_btn"
             android:id="@+id/profile_pic_layout"
@@ -57,32 +57,46 @@
         android:layout_below="@id/toolbar"
         android:layout_marginTop="0dp"
         android:foregroundGravity="center"
-        android:layout_marginBottom="5dp" />
+        android:layout_marginBottom="0dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
         android:layout_alignParentBottom="true"
         android:id="@+id/bottom_layout">
 
         <ImageButton
-            android:id="@+id/attachment_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/baseline_image_24"
-            android:foregroundGravity="center"
-            android:padding="8dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_attach_file_24"
+            android:background="@android:color/transparent"
+            android:layout_marginStart="@dimen/_2sdp"
+            android:paddingEnd="@dimen/_16sdp"
+            android:paddingStart="@dimen/_16sdp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:background="@android:color/transparent" />
+            android:id="@+id/file_button"
+            />
+        <ImageButton
+            android:id="@+id/attachment_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_image_24"
+            android:background="@android:color/transparent"
+            android:foregroundGravity="center"
+            android:padding="4dp"
+            android:layout_marginStart="@dimen/_2sdp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/file_button"
+            />
         <EditText
             android:id="@+id/chat_message_input"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
-            android:layout_marginHorizontal="15dp"
-            android:background="@drawable/background_input"
+            android:layout_marginHorizontal="4dp"
+            android:background="@android:color/transparent"
             android:hint="Write message"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -94,19 +108,19 @@
             android:layout_toEndOf="@id/attachment_button"
             />
         <ImageButton
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/baseline_emoji_emotions_24"
+            android:background="@android:color/transparent"
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
             android:layout_centerInParent="true"
             android:layout_toStartOf="@id/message_send_button"
             android:id="@+id/emoji_button"
-            android:background="@android:color/transparent"
             />
         <ImageButton
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/baseline_send_24"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
@@ -190,6 +204,7 @@
                 android:layout_height="@dimen/_25sdp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
+                android:outlineAmbientShadowColor="@color/white_color"
                 android:visibility="invisible"/>
         </LinearLayout>
 

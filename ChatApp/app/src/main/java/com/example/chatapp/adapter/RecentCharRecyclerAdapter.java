@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -63,11 +64,7 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
                                 holder.usernameText.setText(otherUserModel.getName());
                                 String lastMessage = model.getLastMessage();
                                 String formattedLastMessage;
-                                if(model.getType() != null && model.getType().equals("image")){
-                                     formattedLastMessage = "image";
-                                }else{
-                                    formattedLastMessage = FirebaseUtil.formatLastMessage(lastMessage);
-                                }
+                                formattedLastMessage = FirebaseUtil.formatLastMessage(lastMessage);
                                 boolean lastMessageSendByMe = model.getLastMessageSenderId().equals(currentUserId);
 
                                 // Notify user if they haven't seen latest messages
@@ -76,10 +73,16 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
                                     boolean isLastMessageSeen = model.getLastMessageSeen();
                                     Log.d("ChatRecyclerAdaper", "isLastMessageSeen: " + isLastMessageSeen);
                                     if (!isLastMessageSeen && !lastMessageSendByMe) {
+
+                                        holder.usernameText.setTypeface(null, Typeface.BOLD);
                                         holder.lastMessageText.setTypeface(null, Typeface.BOLD);
+                                        holder.lastMessageText.setTextColor(ContextCompat.getColor(context, R.color.dark));
+
                                         Log.d("Lastmessage", "Set bold message: " + lastMessage);
                                     } else {
+                                        holder.usernameText.setTypeface(null, Typeface.NORMAL);
                                         holder.lastMessageText.setTypeface(null, Typeface.NORMAL);
+                                        holder.lastMessageText.setTextColor(ContextCompat.getColor(context, R.color.secondary_text));
                                     }
                                 }catch (Exception e){
                                     Log.e("ChatRecyclerAdapter", e.getMessage());

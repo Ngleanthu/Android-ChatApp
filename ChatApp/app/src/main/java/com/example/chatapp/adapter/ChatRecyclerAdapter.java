@@ -5,15 +5,23 @@ import static com.example.chatapp.utils.YoutubeUtil.extractYouTubeId;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
+
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,12 +35,18 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
     private final Context context;
     private final String currentUserId;  // Khai báo biến thành viên
+    private final OnFileClickListener fileClickListener;
+
+    public interface OnFileClickListener {
+        void onFileClick(String fileUrl, String fileName);
+    }
 
     // Constructor có thêm currentUserId
-    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatMessageModel> options, Context context, String currentUserId) {
+    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatMessageModel> options, Context context, String currentUserId, OnFileClickListener listener) {
         super(options);
         this.context = context;
         this.currentUserId = currentUserId;  //000 Lưu giá trị vào biến thành viên
+        this.fileClickListener = listener;
     }
 
     @Override
@@ -51,13 +65,28 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.leftChatLayout.setVisibility(View.GONE);
 
             if (model.getType() != null && model.getType().equals("image")) {
-                holder.rightChatTextView.setVisibility(View.GONE);
-                Log.d("ChatRecyclerAdapter", "Image message: " + model.getMessage());
-                addImageToLayout(holder.rightChatLayout, model.getMessage(), context);
-            } else {
+                Log.d("ChatRecyclerAdapter", "Image message: " + model.getFileUrl());
+                addImageToLayout(holder.rightChatLayout, model.getFileUrl(), context);
+            }
+            else if (model.getType() != null &&  model.getType().equals("video")) {
+                addVideoToLayout(holder.rightChatLayout, model.getFileUrl(), context);
+            }
+            else if (model.getType() != null && model.getType().equals("file")){
+                // If user send file
                 // Add message text
                 TextView messageView = new TextView(context);
+                messageView.setTextColor(ContextCompat.getColor(context, R.color.white_color));
+                messageView.setText((model.getFileName()));
+                messageView.setOnClickListener(v -> {
+                    if (fileClickListener != null) {
+                        fileClickListener.onFileClick(model.getFileUrl(), model.getFileName());
+                    }
+                });
+                holder.rightChatLayout.addView(messageView);
 
+            }else {
+                TextView messageView = new TextView(context);
+                messageView.setTextColor(ContextCompat.getColor(context, R.color.white_color));
                 messageView.setText(model.getMessage());
                 holder.rightChatLayout.addView(messageView);
             }
@@ -70,21 +99,35 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                     addYouTubeWebView(holder.rightChatLayout, videoId, context);
                 }
             }
+
         } else {
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatLayout.setVisibility(View.GONE);
 
             if (model.getType() != null &&  model.getType().equals("image")) {
-                holder.leftChatTextView.setVisibility(View.GONE);
-                addImageToLayout(holder.leftChatLayout, model.getMessage(), context);
-            } else {
+                addImageToLayout(holder.leftChatLayout, model.getFileUrl(), context);
+            } else if (model.getType() != null &&  model.getType().equals("video")) {
+
+                addVideoToLayout(holder.leftChatLayout, model.getFileUrl(), context);
+            } else if (model.getType() != null && model.getType().equals("file")){
+                // If user send file
                 // Add message text
                 TextView messageView = new TextView(context);
+                messageView.setTextColor(ContextCompat.getColor(context, R.color.dark));
+                messageView.setText((model.getFileName()));
+                messageView.setOnClickListener(v -> {
+                    if (fileClickListener != null) {
+                        fileClickListener.onFileClick(model.getFileUrl(), model.getFileName());
+                    }
+                });
+                holder.leftChatLayout.addView(messageView);
+
+            }else {
+                TextView messageView = new TextView(context);
+                messageView.setTextColor(ContextCompat.getColor(context, R.color.dark));
                 messageView.setText(model.getMessage());
                 holder.leftChatLayout.addView(messageView);
             }
-
-
 
             // Check for YouTube link and add WebView if necessary
             if (containsYouTubeLink(model.getMessage())) {
@@ -140,13 +183,19 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
 
     public static void addImageToLayout(LinearLayout parentLayout, String imageUrl, Context context) {
-        int width = (int) (300 * context.getResources().getDisplayMetrics().density);
-        int height = (int) (200 * context.getResources().getDisplayMetrics().density);
+        // Lấy kích thước màn hình
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int screenWidth = displayMetrics.widthPixels;
+        int screenHeight = displayMetrics.heightPixels;
+
+        // Tính toán width và height theo tỷ lệ phần trăm
+        int width = (int) (screenWidth * 0.7);
+        int height = (int) (screenHeight * 0.3);
+
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 width,
                 height
         );
-
         if (imageUrl == null || imageUrl.isEmpty()) {
             Log.e("ImageView", "Invalid image URL.");
             return;
@@ -165,6 +214,93 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
         parentLayout.addView(imageView);
     }
 
+//    public static void addVideoToLayout(LinearLayout parentLayout, String videoUrl, Context context) {
+//        if (videoUrl == null || videoUrl.isEmpty()) {
+//            Log.e("VideoView", "Invalid video URL.");
+//            return;
+//        }
+//        Log.e("VideoView", "Show view.");
+//        // Lấy kích thước màn hình
+//        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+//        int screenWidth = displayMetrics.widthPixels;
+//        int screenHeight = displayMetrics.heightPixels;
+//
+//        // Tính toán width và height theo tỷ lệ phần trăm
+//        int width = (int) (screenWidth * 0.7);
+//        int height = (int) (screenHeight * 0.4);
+//
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+//                width,
+//                height
+//        );
+//
+//        // Tạo VideoView
+//        VideoView videoView = new VideoView(context);
+//        videoView.setLayoutParams(layoutParams);
+//
+//        // Thiết lập URL video
+//        videoView.setVideoPath(videoUrl);
+//
+//        // Thêm bộ điều khiển media (tua, play/pause)
+//        MediaController mediaController = new MediaController(context);
+//        mediaController.setAnchorView(videoView);
+//        videoView.setMediaController(mediaController);
+//
+//        // Bắt đầu phát video khi sẵn sàng
+//        videoView.setOnPreparedListener(mediaPlayer -> videoView.start());
+//
+//        // Thêm VideoView vào LinearLayout
+//        parentLayout.addView(videoView);
+//    }
+//
 
+
+    public static void addVideoToLayout(LinearLayout parentLayout, String videoUrl, Context context) {
+        if (videoUrl == null || videoUrl.isEmpty()) {
+            Log.e("VideoView", "Invalid video URL.");
+            return;
+        }
+        Log.e("VideoView", "Show view.");
+        // Lấy kích thước màn hình
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int screenWidth = displayMetrics.widthPixels;
+        int screenHeight = displayMetrics.heightPixels;
+
+        // Tính toán width và height theo tỷ lệ phần trăm
+        int width = (int) (screenWidth * 0.7);
+        int height = (int) (screenHeight * 0.4);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                width,
+                height
+        );
+
+        // Tạo VideoView
+        VideoView videoView = new VideoView(context);
+        videoView.setLayoutParams(layoutParams);
+
+        // Thiết lập URL video
+        videoView.setVideoPath(videoUrl);
+
+        // Thêm bộ điều khiển media (tua, play/pause)
+        MediaController mediaController = new MediaController(context);
+        mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
+
+        // Bắt đầu phát video khi sẵn sàng
+        videoView.setOnPreparedListener(mediaPlayer -> videoView.start());
+
+        // Thêm VideoView vào LinearLayout
+        parentLayout.addView(videoView);
+
+        // Thêm sự kiện click để chuyển sang toàn màn hình
+        videoView.setOnClickListener(v -> {
+            LinearLayout.LayoutParams newLayoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            );
+            videoView.setLayoutParams(newLayoutParams);  // Cập nhật kích thước thành toàn màn hình
+        });
+    }
 
 }
