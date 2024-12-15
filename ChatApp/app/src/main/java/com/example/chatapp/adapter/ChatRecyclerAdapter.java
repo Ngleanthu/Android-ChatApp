@@ -53,9 +53,6 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
         Log.d("chat apd", "setupChatRecyclerView: " + currentUserId);
         boolean isCurrentUser = model.getSenderId().equals(currentUserId);
-        Log.d("ChatRecyclerAdapter", "message: " + model.getMessage());
-        Log.d("ChatRecyclerAdapter", "message: " + model.getType());
-
         // Reset layouts to avoid duplicates
         holder.rightChatLayout.removeAllViews();
         holder.leftChatLayout.removeAllViews();
@@ -93,7 +90,6 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
             // Check for YouTube link and add WebView if necessary
             if (containsYouTubeLink(model.getMessage())) {
-                Log.d("ChatRecyclerAdapter", "YouTube message: " + model.getMessage());
                 String videoId = extractYouTubeId(model.getMessage());
                 if (videoId != null) {
                     addYouTubeWebView(holder.rightChatLayout, videoId, context);
@@ -131,7 +127,6 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
             // Check for YouTube link and add WebView if necessary
             if (containsYouTubeLink(model.getMessage())) {
-                Log.d("ChatRecyclerAdapter", "YouTube message: " + model.getMessage());
                 String videoId = extractYouTubeId(model.getMessage());
                 if (videoId != null) {
                     addYouTubeWebView(holder.leftChatLayout, videoId, context);
