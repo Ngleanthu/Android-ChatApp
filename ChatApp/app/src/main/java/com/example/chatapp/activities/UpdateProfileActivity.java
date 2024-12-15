@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.chatapp.R;
 import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.FileHelper;
+import com.example.chatapp.utils.HashUtil;
 import com.example.chatapp.utils.PreferenceManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
@@ -259,20 +260,25 @@ public class UpdateProfileActivity extends AppCompatActivity {
         if (!birthdate.isEmpty()) {
             updatedUser.put("birthdate", birthdate);
         }
+        String passwordNoHash;
         if (!newPassword.isEmpty()) {
+            passwordNoHash = newPassword.toString();
+            newPassword = HashUtil.hashPassword(newPassword.toString());
             updatedUser.put("password", newPassword);
+        } else {
+            passwordNoHash = "";
         }
 
         if (imageUrl != "") {
             updatedUser.put("image", imageUrl); // Cập nhật URL ảnh nếu có
         }
-
         // Cập nhật thông tin người dùng trong Firestore
         userRef.update(updatedUser)
                 .addOnSuccessListener(aVoid -> {
                     // Xử lý khi cập nhật thành công
                     Log.d("Firestore", "User profile updated successfully");
-                    updateInfoUserToPreferenceManger(name, birthdate, imageUrl ,newPassword);
+                    updateInfoUserToPreferenceManger(name, birthdate, imageUrl ,passwordNoHash);
+
                     finish(); // Đóng Activity hiện tại, trở về Activity trước đó
                 })
                 .addOnFailureListener(e -> {
