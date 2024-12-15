@@ -17,6 +17,7 @@ import com.example.chatapp.databinding.ActivityMainBinding;
 import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.PreferenceManager;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -118,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void signOut(){
         showToast("Signing out...");
+        FirebaseAuth.getInstance().signOut();
+
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference = database.collection(Constants.KEY_COLLECTION_USERS).document(
                 preferenceManager.getString(Constants.KEY_USER_ID)
