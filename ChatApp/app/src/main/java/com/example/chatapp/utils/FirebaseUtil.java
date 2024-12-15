@@ -34,7 +34,6 @@ public class FirebaseUtil {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         CollectionReference usersCollection = database.collection("users");
 
-        // Tìm kiếm người dùng theo token
         Query query = usersCollection.whereEqualTo("fcmToken", fcmToken);
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().size() > 0) {

@@ -1,4 +1,4 @@
-package com.example.chatapp.activities;
+    package com.example.chatapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import com.example.chatapp.models.UserModel;
 import com.example.chatapp.utils.AndroidUtil;
 import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.FirebaseUtil;
+import com.example.chatapp.utils.HashUtil;
 import com.example.chatapp.utils.PreferenceManager;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -75,7 +76,7 @@ public class SignInActivity extends Activity {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         database.collection(Constants.KEY_COLLECTION_USERS)
                 .whereEqualTo(Constants.KEY_EMAIL, binding.inputEmail.getText().toString())
-                .whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())
+                .whereEqualTo(Constants.KEY_PASSWORD, HashUtil.hashPassword(binding.inputPassword.getText().toString()))
                 .get()
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0){
