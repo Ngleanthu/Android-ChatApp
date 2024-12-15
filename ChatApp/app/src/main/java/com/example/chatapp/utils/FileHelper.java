@@ -2,23 +2,32 @@ package com.example.chatapp.utils;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
+
+import android.app.DownloadManager;
 import android.content.ContentResolver;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+
 import android.provider.OpenableColumns;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.core.content.ContextCompat;
 
 import java.io.File;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class FileHelper {
 
+    private static final Log log = LogFactory.getLog(FileHelper.class);
     private final Activity activity;
     private final ActivityResultLauncher<Intent> resultLauncher;
     private final ActivityResultLauncher<String[]> permissionLauncher;
@@ -136,7 +145,6 @@ public class FileHelper {
                 }
             }
         } else if (uri.getScheme().equals("file")) {
-            // For "file" scheme, use the File class
             fileName = new File(uri.getPath()).getName();
         }
 
@@ -154,4 +162,35 @@ public class FileHelper {
             return "file";
         }
     }
+
+    public static void downloadFile(String fileUrl, String fileName, Context context) {
+        if (fileUrl == null) return;
+
+        try {
+            Uri fileUri = Uri.parse(fileUrl); // Parse the file URL into a URI
+
+            // Use DownloadManager to download the file
+            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            if (downloadManager == null) {
+                Toast.makeText(context, "Download Manager not available", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            DownloadManager.Request request = new DownloadManager.Request(fileUri);
+            request.setTitle((fileName != null ? fileName : "file"));
+            request.setDescription("File is being downloaded...");
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName != null ? fileName : "unknown_file"); // Save to Downloads folder
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+            // Enqueue the download
+            downloadManager.enqueue(request);
+            Toast.makeText(context, "Download started", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            android.util.Log.d("Upload", "Image URI: " + fileUrl);
+            android.util.Log.d("DOWNLOADFILE", "Error downloading file: " + e.getMessage());
+            Toast.makeText(context, "Error downloading file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }

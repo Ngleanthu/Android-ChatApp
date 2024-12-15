@@ -53,11 +53,11 @@
         android:id="@+id/chat_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_layout"
+        android:layout_above="@+id/progress_layout"
         android:layout_below="@id/toolbar"
-        android:layout_marginTop="0dp"
-        android:foregroundGravity="center"
-        android:layout_marginBottom="0dp" />
+        android:layout_marginTop="-2dp"
+        android:layout_marginBottom="2dp"
+        android:foregroundGravity="center" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -138,6 +138,7 @@
     android:visibility="gone"
     app:emojiGridColumns="7"
     android:layout_alignParentBottom="true"
+
     />
 
     <FrameLayout
@@ -204,10 +205,50 @@
                 android:layout_height="@dimen/_25sdp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:outlineAmbientShadowColor="@color/white_color"
+                android:indeterminateTint="@color/white_color"
                 android:visibility="invisible"/>
         </LinearLayout>
 
+
+
     </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_layout"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_above="@+id/bottom_layout"
+
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+
+            <!-- ProgressBar -->
+            <ProgressBar
+                android:id="@+id/progressBarFile"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/primary_dark" />
+
+            <!-- Hint TextView -->
+            <TextView
+                android:id="@+id/progressHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="sending ..."
+                android:textSize="14sp"
+                android:textColor="@color/primary_dark" />
+        </LinearLayout>
+
+    </FrameLayout>
+
 </RelativeLayout>
 
