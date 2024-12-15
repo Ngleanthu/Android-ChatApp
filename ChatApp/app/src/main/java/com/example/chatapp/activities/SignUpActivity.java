@@ -91,7 +91,6 @@ public class SignUpActivity extends Activity {
 
     private void signUp() {
         loading(true);
-
         String email = binding.inputEmail.getText().toString();
         String password = binding.inputPassword.getText().toString();
 
