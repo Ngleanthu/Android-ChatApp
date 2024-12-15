@@ -6,6 +6,7 @@ import static com.example.chatapp.utils.YoutubeUtil.containsYouTubeLink;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.net.Uri;
 
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +63,7 @@ import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -108,6 +111,7 @@ public class ChatActivity extends AppCompatActivity {
     ImageButton cameraBtn;
 
     private ListenerRegistration messageListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -260,7 +264,81 @@ public class ChatActivity extends AppCompatActivity {
         FirestoreRecyclerOptions<ChatMessageModel> options = new FirestoreRecyclerOptions.Builder<ChatMessageModel>()
                 .setQuery(query, ChatMessageModel.class).build();
         Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
-        adapter = new ChatRecyclerAdapter(options, getApplicationContext(),currentUserId, this::onFileClick);
+        adapter = new ChatRecyclerAdapter(options, getApplicationContext(),currentUserId);
+        adapter.setOnFileClickListener(this::onFileClick);
+        adapter.setOnAudioClickListener(new ChatRecyclerAdapter.OnAudioClickListener() {
+            private MediaPlayer mediaPlayer;
+            private boolean isPlaying = false;
+            private int duration;
+            @Override
+            public void onAudioClick(String audioUrl, SeekBar seekBar) {
+                if (isPlaying) {
+                    stopAudio();
+                } else {
+                    playAudio(audioUrl, seekBar);
+                }
+            }
+
+            @Override
+            public void onSeekBarChanged(int progress) {
+                if (mediaPlayer != null) {
+                    int playPositionInMillisecconds = (duration / 100)
+                            * progress;
+                    mediaPlayer.seekTo(playPositionInMillisecconds);
+                }
+            }
+
+            private void playAudio(String audioUrl, SeekBar seekBar) {
+                if (audioUrl == null || audioUrl.isEmpty()) {
+                    Toast.makeText(ChatActivity.this, "Invalid audio URL", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    mediaPlayer = new MediaPlayer();
+                    mediaPlayer.setDataSource(audioUrl);
+                    mediaPlayer.setOnPreparedListener(mp -> {
+                        mediaPlayer.start();
+                        isPlaying = true;
+                        duration = mediaPlayer.getDuration();
+                        new Thread(() -> {
+                            while (mediaPlayer != null && isPlaying) {
+                                try {
+                                    if (seekBar != null) {
+                                        seekBar.setProgress((int) (((float) mediaPlayer
+                                                .getCurrentPosition() / duration) * 100));
+                                    }
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                    });
+
+                    mediaPlayer.setOnCompletionListener(mp -> {
+                        stopAudio();
+                        if (seekBar != null) {
+                            seekBar.setProgress(0); // Reset SeekBar
+                        }
+                    });
+                    mediaPlayer.prepareAsync();
+
+                } catch (IOException e) {
+                    Toast.makeText(ChatActivity.this, "Failed to play audio: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+
+            private void stopAudio() {
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+                    isPlaying = false;
+                }
+            }
+        });
         LinearLayoutManager manager=new LinearLayoutManager(this);
         manager.setReverseLayout(true);
 
@@ -523,7 +601,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void handleFileSelection(Uri fileUri, String type) {
         String message = currentUserName + " sent an attachment";
-        if (type.equals("file") || type.equals("video")) {
+        if (type.equals("file") || type.equals("video") || type.equals("audio")) {
             String fileName = FileHelper.getFileName(this, fileUri);
             Log.d("FileSelection", "File Selected: " + fileUri);
 
@@ -549,13 +627,15 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-private void onFileClick(String fileUrl, String fileName) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setTitle("Download File")
-            .setMessage("Do you want to download this file?")
-            .setPositiveButton("Download", (dialog, which) -> downloadFile(fileUrl, fileName))
-            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-            .show();
+private void onFileClick(String fileUrl, String fileName, String type) {
+        if(type.equals("file")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Download File")
+                    .setMessage("Do you want to download this file?")
+                    .setPositiveButton("Download", (dialog, which) -> downloadFile(fileUrl, fileName))
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .show();
+        }
 }
 
     private void downloadFile(String fileUrl, String fileName) {
@@ -644,4 +724,6 @@ private void onFileClick(String fileUrl, String fileName) {
             progressBar.setVisibility(View.INVISIBLE);
         }
     }
+
 }
+
