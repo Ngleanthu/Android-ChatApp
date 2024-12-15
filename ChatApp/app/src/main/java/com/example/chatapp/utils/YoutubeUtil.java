@@ -1,8 +1,6 @@
 package com.example.chatapp.utils;
 import android.content.Context;
-import android.webkit.WebSettings;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.webkit.WebChromeClient;

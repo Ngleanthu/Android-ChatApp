@@ -2,6 +2,7 @@ package com.example.chatapp.activities;
 
 
 import static com.example.chatapp.utils.YoutubeUtil.containsYouTubeLink;
+import static com.example.chatapp.utils.AndroidUtil.containsLink;
 
 import android.app.AlertDialog;
 import android.app.DownloadManager;
@@ -200,7 +201,7 @@ public class ChatActivity extends AppCompatActivity {
                 // Replace symbol patterns with emojis
                 String input = s.toString();
                 String updatedInput = input;
-                if(!containsYouTubeLink(input)) {
+                if(!containsYouTubeLink(input) && !containsLink(input)) {
                     updatedInput = EmojiConverter.replaceWithEmojis(input);
                 }
                 // Avoid infinite loop by checking if text actually changed
