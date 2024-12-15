@@ -1,4 +1,4 @@
-    package com.example.chatapp.activities;
+package com.example.chatapp.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -46,17 +46,17 @@ public class SignInActivity extends Activity {
             );
         }
         else{
-        preferenceManager = new PreferenceManager(getApplicationContext());
+            preferenceManager = new PreferenceManager(getApplicationContext());
 
-        if(preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
+            if(preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)){
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
 
-        binding = ActivitySignInBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        setListeners();
+            binding = ActivitySignInBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+            setListeners();
         }
     }
 
