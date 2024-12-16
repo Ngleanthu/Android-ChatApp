@@ -65,19 +65,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2a36e8fe-e4dd-4452-a523-bfe84d12eaa0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/ChatRecyclerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/ChatRecyclerAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/UpdateProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/UpdateProfileActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/FileHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/FileHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/chat_message_recycler_row.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/chat_message_recycler_row.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activitty_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activitty_chat.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +82,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=LMV600VMe884237f)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\thao4\.android\avd\Medium_Phone_API_29.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/ChatApp">
       <ProjectState />

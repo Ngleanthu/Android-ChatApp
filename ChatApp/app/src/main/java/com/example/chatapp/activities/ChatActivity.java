@@ -149,7 +149,7 @@ public class ChatActivity extends AppCompatActivity   {
                 new FileHelper.FileHelperCallback() {
                     @Override
                     public void onFileSelected(Uri fileUri) {
-                        Toast.makeText(ChatActivity.this, "File selected: " + fileUri, Toast.LENGTH_SHORT).show();
+                        Log.d("File Selected", "File selected: " + fileUri);
                     }
 
                     @Override
@@ -397,14 +397,8 @@ public class ChatActivity extends AppCompatActivity   {
                 public void onResponse(Call call, Response response) throws IOException {
                     if (response.isSuccessful()) {
                         Log.d("callApi", "Notification sent successfully");
-                        runOnUiThread(() -> {
-                            Toast.makeText(getApplicationContext(), "Notification sent successfully", Toast.LENGTH_SHORT).show();
-                        });
                     } else {
                         Log.e("callApi", "Failed to send notification. Response: " + response.message());
-                        runOnUiThread(() -> {
-                            Toast.makeText(getApplicationContext(), "Failed to send notification", Toast.LENGTH_SHORT).show();
-                        });
                     }
                 }
             });
@@ -522,6 +516,9 @@ public class ChatActivity extends AppCompatActivity   {
 
         if (type.equals("file") || type.equals("video")) {
             viewLoading.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) recyclerView.getLayoutParams();
+            params.addRule(RelativeLayout.ABOVE, R.id.progress_layout);
+            recyclerView.setLayoutParams(params);
             String fileName = FileHelper.getFileName(this, fileUri);
             Log.d("FileSelection", "File Selected: " + fileUri);
 
@@ -532,6 +529,8 @@ public class ChatActivity extends AppCompatActivity   {
                     .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(fileUrl -> {
                         // Pass the file URL to sendMessageToUser
                         sendMessageToUser(message, fileUrl.toString(), fileName, type);
+                        params.addRule(RelativeLayout.ABOVE, R.id.bottom_layout);
+                        recyclerView.setLayoutParams(params);
                         viewLoading.setVisibility(View.INVISIBLE);
                     }))
                     .addOnFailureListener(e ->
