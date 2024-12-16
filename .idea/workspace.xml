@@ -65,9 +65,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2a36e8fe-e4dd-4452-a523-bfe84d12eaa0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/SignInActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/SignInActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/SignUpActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/SignUpActivity.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +169,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "#48 on clean",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/Dai hoc/BaiTap/Mobile-dev/Android-ChatApp",
     "project.structure.last.edited": "Modules",
