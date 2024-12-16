@@ -11,4 +11,5 @@
     <color name="error">#B00020</color>
     <color name="received_message_background">#090D16</color>
     <color name="dark">#FF000000</color>
+    <color name="bg_input">#E0DCDC</color>
 </resources>

@@ -149,8 +149,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
         database = FirebaseFirestore.getInstance();
 
         // Lấy email từ Intent
-        String email = getIntent().getStringExtra(Constants.KEY_EMAIL);
-
+        String email = getIntent().getStringExtra("EMAIL");
+        showToast("Email: " + email);
         setListeners(email);
     }
 
@@ -160,6 +160,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
             if (isValidPassword(newPassword)) {
                 resetPassword(email, newPassword);
             }
+        });
+        binding.buttonResetPasswordBack.setOnClickListener(v -> {
+            finish();
         });
     }
 
@@ -176,7 +179,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private void resetPassword(String email, String newPassword) {
         loading(true);
-
+        showToast("Email: " + email);
         // Hash mật khẩu mới
         String hashedPassword = HashUtil.hashPassword(newPassword);
 

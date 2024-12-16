@@ -41,10 +41,17 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
     @Override
     protected void onBindViewHolder(@NonNull ChatRoomModelViewHolder holder, int position, @NonNull ChatRoomModel model) {
 
+        if (model.getLastMessage() == null || model.getLastMessage().isEmpty()) {
+            holder.itemView.setVisibility(View.GONE);
+            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+            return; // Dừng xử lý
+        } else {
+            holder.itemView.setVisibility(View.VISIBLE);
+        }
+
         holder.usernameText.setText("");
         holder.lastMessageText.setText("");
         holder.lastMessageTime.setText("");
-        holder.profilePic.setImageResource(R.mipmap.ic_default_profile);
 
         Log.d("Recent chat", "enter");
         PreferenceManager preferenceManager = new PreferenceManager(context.getApplicationContext());
@@ -58,8 +65,6 @@ public class RecentCharRecyclerAdapter extends FirestoreRecyclerAdapter<ChatRoom
                             UserModel otherUserModel = document.toObject(UserModel.class);
 
                             if (otherUserModel != null) {
-                                // In thông tin UserModel để kiểm tra ánh xạ
-                                Log.d("FirebaseDebug", "UserModel: " + otherUserModel.getUserId() + "  Image"+ otherUserModel.getImage());
                                 // Thiết lập giao diện với UserModel
                                 holder.usernameText.setText(otherUserModel.getName());
                                 String lastMessage = model.getLastMessage();
