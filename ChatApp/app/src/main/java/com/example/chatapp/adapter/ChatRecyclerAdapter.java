@@ -3,31 +3,22 @@ import static com.example.chatapp.utils.YoutubeUtil.addYouTubeWebView;
 import static com.example.chatapp.utils.YoutubeUtil.containsYouTubeLink;
 import static com.example.chatapp.utils.YoutubeUtil.extractYouTubeId;
 
-
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.models.ChatMessageModel;
+import com.example.chatapp.utils.MediaUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -35,29 +26,19 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
     private final Context context;
     private final String currentUserId;  // Khai báo biến thành viên
-    private OnFileClickListener fileClickListener;
-    private OnAudioClickListener audioClickListener;
-    public interface OnFileClickListener {
-        void onFileClick(String fileUrl, String fileName, String type);
-    }
-    public interface OnAudioClickListener {
-        void onAudioClick(String audioUrl, SeekBar seekBar);
-        void onSeekBarChanged(int progress);
-    }
+    private final OnFileClickListener fileClickListener;
 
+    public interface OnFileClickListener {
+        void onFileClick(String fileUrl, String fileName);
+    }
     // Constructor có thêm currentUserId
-    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatMessageModel> options, Context context, String currentUserId) {
+    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatMessageModel> options, Context context, String currentUserId, OnFileClickListener listener) {
         super(options);
         this.context = context;
         this.currentUserId = currentUserId;  //000 Lưu giá trị vào biến thành viên
-    }
-    public void setOnFileClickListener(OnFileClickListener listener) {
         this.fileClickListener = listener;
     }
 
-    public void setOnAudioClickListener(OnAudioClickListener listener) {
-        this.audioClickListener = listener;
-    }
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
         Log.d("chat apd", "setupChatRecyclerView: " + currentUserId);
@@ -75,14 +56,10 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
             if (model.getType() != null && model.getType().equals("image")) {
                 Log.d("ChatRecyclerAdapter", "Image message: " + model.getFileUrl());
-                addImageToLayout(holder.rightChatLayout, model.getFileUrl(), context);
+                MediaUtil.addImageToLayout(holder.rightChatLayout, model.getFileUrl() ,model.getFileName() , context, false);
             }
             else if (model.getType() != null &&  model.getType().equals("video")) {
-                addVideoToLayout(holder.rightChatLayout, model.getFileUrl(), context);
-            }
-            else if (model.getType() != null && model.getType().equals("audio")) {
-                Log.d("Audio link", model.getFileUrl());
-                addAudioButtonToLayout(holder.rightChatLayout, model.getFileUrl(), context);
+                MediaUtil.addVideoToLayout(holder.rightChatLayout,model.getFileUrl() ,model.getFileName(),context,  false);
             }
             else if (model.getType() != null && model.getType().equals("file")){
                 // If user send file
@@ -92,13 +69,12 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                 messageView.setText((model.getFileName()));
                 messageView.setOnClickListener(v -> {
                     if (fileClickListener != null) {
-                        fileClickListener.onFileClick(model.getFileUrl(), model.getFileName(), model.getType());
+                        fileClickListener.onFileClick(model.getFileUrl(), model.getFileName());
                     }
                 });
                 holder.rightChatLayout.addView(messageView);
 
-            }
-            else {
+            }else {
                 TextView messageView = new TextView(context);
                 messageView.setTextColor(ContextCompat.getColor(context, R.color.white_color));
                 messageView.setText(model.getMessage());
@@ -119,14 +95,11 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.rightChatLayout.setVisibility(View.GONE);
 
             if (model.getType() != null &&  model.getType().equals("image")) {
-                addImageToLayout(holder.leftChatLayout, model.getFileUrl(), context);
+                MediaUtil.addImageToLayout(holder.leftChatLayout, model.getFileUrl(), model.getFileName(), context, false);
             } else if (model.getType() != null &&  model.getType().equals("video")) {
-                addVideoToLayout(holder.leftChatLayout, model.getFileUrl(), context);
-            }
-            else if (model.getType() != null && model.getType().equals("audio")) {
-                addAudioButtonToLayout(holder.leftChatLayout, model.getFileUrl(), context);
-            }
-            else if (model.getType() != null && model.getType().equals("file")){
+
+                MediaUtil.addVideoToLayout(holder.leftChatLayout, model.getFileUrl(), model.getFileName(), context, false);
+            } else if (model.getType() != null && model.getType().equals("file")){
                 // If user send file
                 // Add message text
                 TextView messageView = new TextView(context);
@@ -134,13 +107,12 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                 messageView.setText((model.getFileName()));
                 messageView.setOnClickListener(v -> {
                     if (fileClickListener != null) {
-                        fileClickListener.onFileClick(model.getFileUrl(), model.getFileName(), model.getType());
+                        fileClickListener.onFileClick(model.getFileUrl(), model.getFileName());
                     }
                 });
                 holder.leftChatLayout.addView(messageView);
 
-            }
-            else {
+            }else {
                 TextView messageView = new TextView(context);
                 messageView.setTextColor(ContextCompat.getColor(context, R.color.dark));
                 messageView.setText(model.getMessage());
@@ -190,7 +162,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
         ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);
-            mainLayout = itemView.findViewById(R.id.main); // Tham chiếu đến mainLayout
+            mainLayout = itemView.findViewById(R.id.main);
             leftChatLayout = itemView.findViewById(R.id.left_chat_layout);
             rightChatLayout = itemView.findViewById(R.id.right_chat_layout);
             leftChatTextView = itemView.findViewById(R.id.left_chat_textview);
@@ -199,166 +171,4 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
         }
     }
 
-
-    public static void addImageToLayout(LinearLayout parentLayout, String imageUrl, Context context) {
-        // Lấy kích thước màn hình
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int screenWidth = displayMetrics.widthPixels;
-        int screenHeight = displayMetrics.heightPixels;
-
-        // Tính toán width và height theo tỷ lệ phần trăm
-        int width = (int) (screenWidth * 0.7);
-        int height = (int) (screenHeight * 0.3);
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                width,
-                height
-        );
-        if (imageUrl == null || imageUrl.isEmpty()) {
-            Log.e("ImageView", "Invalid image URL.");
-            return;
-        }
-
-        // Tạo một ImageView mới
-        ImageView imageView = new ImageView(context);
-        imageView.setLayoutParams(layoutParams);
-
-        Glide.with(context)
-                .load(imageUrl)
-                .placeholder(R.drawable.background_input)
-                .error(R.drawable.background_icon)
-                .into(imageView);
-
-        parentLayout.addView(imageView);
-    }
-
-    public static void addVideoToLayout(LinearLayout parentLayout, String videoUrl, Context context) {
-        if (videoUrl == null || videoUrl.isEmpty()) {
-            Log.e("VideoView", "Invalid video URL.");
-            return;
-        }
-        Log.e("VideoView", "Show view.");
-        // Lấy kích thước màn hình
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int screenWidth = displayMetrics.widthPixels;
-        int screenHeight = displayMetrics.heightPixels;
-
-        // Tính toán width và height theo tỷ lệ phần trăm
-        int width = (int) (screenWidth * 0.7);
-        int height = (int) (screenHeight * 0.4);
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                width,
-                height
-        );
-
-        // Tạo VideoView
-        VideoView videoView = new VideoView(context);
-        videoView.setLayoutParams(layoutParams);
-
-        // Thiết lập URL video
-        videoView.setVideoPath(videoUrl);
-
-        // Thêm bộ điều khiển media (tua, play/pause)
-        MediaController mediaController = new MediaController(context);
-        mediaController.setAnchorView(videoView);
-        mediaController.setMediaPlayer(videoView);
-        videoView.setMediaController(mediaController);
-
-        // Bắt đầu phát video khi sẵn sàng
-        videoView.setOnPreparedListener(mediaPlayer -> videoView.start());
-
-        // Thêm VideoView vào LinearLayout
-        parentLayout.addView(videoView);
-
-        // Thêm sự kiện click để chuyển sang toàn màn hình
-        videoView.setOnClickListener(v -> {
-            LinearLayout.LayoutParams newLayoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
-            );
-            videoView.setLayoutParams(newLayoutParams);  // Cập nhật kích thước thành toàn màn hình
-        });
-    }
-    void addAudioButtonToLayout(LinearLayout parentLayout, String audioUrl, Context context) {
-        if (audioUrl == null || audioUrl.isEmpty()) {
-            Log.e("AudioView", "Invalid audio URL.");
-            return;
-        }
-        Log.d("addAudioBtn", "enter");
-
-        // Create a horizontal LinearLayout to hold the audio button and SeekBar
-        LinearLayout audioLayout = new LinearLayout(context);
-        audioLayout.setOrientation(LinearLayout.HORIZONTAL);
-
-        // Set layout parameters for the audio layout
-        LinearLayout.LayoutParams audioLayoutParams = new LinearLayout.LayoutParams(
-                500,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        audioLayout.setLayoutParams(audioLayoutParams);
-
-        // Create the ImageButton (audio play button)
-        int buttonWidth = 50;  // Fixed width for the audio button
-        int buttonHeight = 50;
-        LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(
-                buttonWidth,
-                buttonHeight
-        );
-        ImageButton audioPlayButton = new ImageButton(context);
-        audioPlayButton.setLayoutParams(buttonLayoutParams);
-
-        // Set image resource for play button
-        audioPlayButton.setImageResource(R.drawable.baseline_play_arrow_24);
-        audioPlayButton.setContentDescription("Play Audio");
-        audioPlayButton.setBackground(null);
-
-        // Create the SeekBar
-        SeekBar seekBar = new SeekBar(context);
-        seekBar.setMax(100);
-        seekBar.setLayoutParams(new LinearLayout.LayoutParams(
-                100,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                1  // Weight to take the remaining space
-        ));
-
-        // Add the audio button and seek bar to the audio layout
-        audioLayout.addView(audioPlayButton);
-        audioLayout.addView(seekBar);
-
-        // Add the audio layout to the parent layout
-        parentLayout.addView(audioLayout);
-
-        final boolean[] isPlaying = {false};
-        audioPlayButton.setOnClickListener(v -> {
-            if (audioClickListener != null) {
-                isPlaying[0] = !isPlaying[0];
-                audioPlayButton.setImageResource(isPlaying[0] ? R.drawable.baseline_pause_24 : R.drawable.baseline_play_arrow_24);
-                audioClickListener.onAudioClick(audioUrl, seekBar); // Pass the SeekBar here
-            }
-        });
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser && audioClickListener != null) {
-                    audioClickListener.onSeekBarChanged(progress); // Notify ChatActivity
-                }
-                if(progress >= 100){
-                    isPlaying[0] = false;
-                    audioPlayButton.setImageResource(R.drawable.baseline_play_arrow_24);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // Optionally, you can pause the audio here
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // Optionally, you can resume the audio here
-            }
-        });
-    }
 }

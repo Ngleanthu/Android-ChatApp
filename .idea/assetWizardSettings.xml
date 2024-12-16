@@ -308,7 +308,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/pause/baseline_pause_24.xml" />
+                                      <entry key="url" value="file:/C:/Users/MSI%20GF63/AppData/Local/Android/Sdk/icons/material/materialicons/close/baseline_close_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -319,7 +319,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="baseline_pause_24" />
+                            <entry key="outputName" value="baseline_close_24" />
                             <entry key="sourceFile" value="D:\Mobile\DoaAn_1012\Android-ChatApp" />
                           </map>
                         </option>

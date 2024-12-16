@@ -1,18 +1,11 @@
 package com.example.chatapp.activities;
 
-
 import static com.example.chatapp.utils.YoutubeUtil.containsYouTubeLink;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
-import android.content.Context;
-import android.media.MediaPlayer;
 import android.net.Uri;
 
-import android.content.Intent;
-
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -25,14 +18,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.emoji2.emojipicker.EmojiPickerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,7 +56,6 @@ import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -76,16 +68,15 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity   {
     private FileHelper fileHelper;
     private PreferenceManager preferenceManager;
 
     UserModel otherUser;
     String chatroomId;
     ChatRoomModel chatRoomModel;
-    String currentUserId; // Thêm biến lưu currentUserId
+    String currentUserId;
     String currentUserName;
-    private ActivityResultLauncher<Intent> activityResultLauncher;
 
 
     FrameLayout viewSendImage;
@@ -94,8 +85,8 @@ public class ChatActivity extends AppCompatActivity {
     Button sendImageBtn;
     Button cancelSenImageBtn;
     ImageView imageSelected;
-    private ProgressBar progressBar;
-
+    ProgressBar progressBar;
+    FrameLayout viewLoading;
 
     EditText messageInput;
     ImageButton sendMessageBtn;
@@ -111,7 +102,6 @@ public class ChatActivity extends AppCompatActivity {
     ImageButton cameraBtn;
 
     private ListenerRegistration messageListener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +122,7 @@ public class ChatActivity extends AppCompatActivity {
         imageSelected = findViewById(R.id.selected_image_view);
         progressBar = findViewById(R.id.progressBarImage);
         fileBtn = findViewById(R.id.file_button);
+        viewLoading = findViewById(R.id.progress_layout);
 
         preferenceManager = new PreferenceManager(getApplicationContext());
 
@@ -184,7 +175,6 @@ public class ChatActivity extends AppCompatActivity {
         backBtn.setOnClickListener((v) -> getOnBackPressedDispatcher().onBackPressed());
         otherUsername.setText(otherUser.getName());
         String imageUrl = otherUser.getImage();
-        Log.d("CHATACTIVITY", "UserModel: " + otherUser.getUserId() + "  Image: "+ otherUser.getImage());
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Glide.with(this)
                     .load(imageUrl)
@@ -232,15 +222,17 @@ public class ChatActivity extends AppCompatActivity {
             loading(true);
             uploadImageAndSaveToFirestore(new OnImageUploadCompleteListener() {
                 @Override
-                public void onImageUploadComplete(boolean success, String imageUrl) {
+                public void onImageUploadComplete(boolean success, String imageUrl, String fileName) {
                     if (success) {
-                        sendMessageToUser(currentUserName + " sent a photo", imageUrl, null,"image");
+                        sendMessageToUser(currentUserName + " sent a photo", imageUrl, fileName,"image");
+                        loading(false);
                         viewSendImage.setVisibility(View.GONE);
                     } else {
                         Log.e("ChatActivity Upload", "Failed to upload image");
                     }
                 }
             });
+
         }));
 
 
@@ -264,81 +256,7 @@ public class ChatActivity extends AppCompatActivity {
         FirestoreRecyclerOptions<ChatMessageModel> options = new FirestoreRecyclerOptions.Builder<ChatMessageModel>()
                 .setQuery(query, ChatMessageModel.class).build();
         Log.d("chatactivity", "setupChatRecyclerView: " + currentUserId );
-        adapter = new ChatRecyclerAdapter(options, getApplicationContext(),currentUserId);
-        adapter.setOnFileClickListener(this::onFileClick);
-        adapter.setOnAudioClickListener(new ChatRecyclerAdapter.OnAudioClickListener() {
-            private MediaPlayer mediaPlayer;
-            private boolean isPlaying = false;
-            private int duration;
-            @Override
-            public void onAudioClick(String audioUrl, SeekBar seekBar) {
-                if (isPlaying) {
-                    stopAudio();
-                } else {
-                    playAudio(audioUrl, seekBar);
-                }
-            }
-
-            @Override
-            public void onSeekBarChanged(int progress) {
-                if (mediaPlayer != null) {
-                    int playPositionInMillisecconds = (duration / 100)
-                            * progress;
-                    mediaPlayer.seekTo(playPositionInMillisecconds);
-                }
-            }
-
-            private void playAudio(String audioUrl, SeekBar seekBar) {
-                if (audioUrl == null || audioUrl.isEmpty()) {
-                    Toast.makeText(ChatActivity.this, "Invalid audio URL", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                try {
-                    mediaPlayer = new MediaPlayer();
-                    mediaPlayer.setDataSource(audioUrl);
-                    mediaPlayer.setOnPreparedListener(mp -> {
-                        mediaPlayer.start();
-                        isPlaying = true;
-                        duration = mediaPlayer.getDuration();
-                        new Thread(() -> {
-                            while (mediaPlayer != null && isPlaying) {
-                                try {
-                                    if (seekBar != null) {
-                                        seekBar.setProgress((int) (((float) mediaPlayer
-                                                .getCurrentPosition() / duration) * 100));
-                                    }
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-                    });
-
-                    mediaPlayer.setOnCompletionListener(mp -> {
-                        stopAudio();
-                        if (seekBar != null) {
-                            seekBar.setProgress(0); // Reset SeekBar
-                        }
-                    });
-                    mediaPlayer.prepareAsync();
-
-                } catch (IOException e) {
-                    Toast.makeText(ChatActivity.this, "Failed to play audio: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-            }
-
-            private void stopAudio() {
-                if (mediaPlayer != null) {
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
-                    isPlaying = false;
-                }
-            }
-        });
+        adapter = new ChatRecyclerAdapter(options, getApplicationContext(),currentUserId, this::onFileClick);
         LinearLayoutManager manager=new LinearLayoutManager(this);
         manager.setReverseLayout(true);
 
@@ -601,7 +519,9 @@ public class ChatActivity extends AppCompatActivity {
 
     private void handleFileSelection(Uri fileUri, String type) {
         String message = currentUserName + " sent an attachment";
-        if (type.equals("file") || type.equals("video") || type.equals("audio")) {
+
+        if (type.equals("file") || type.equals("video")) {
+            viewLoading.setVisibility(View.VISIBLE);
             String fileName = FileHelper.getFileName(this, fileUri);
             Log.d("FileSelection", "File Selected: " + fileUri);
 
@@ -612,9 +532,12 @@ public class ChatActivity extends AppCompatActivity {
                     .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(fileUrl -> {
                         // Pass the file URL to sendMessageToUser
                         sendMessageToUser(message, fileUrl.toString(), fileName, type);
+                        viewLoading.setVisibility(View.INVISIBLE);
                     }))
                     .addOnFailureListener(e ->
                             Toast.makeText(this, "File upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+
+
         }else if(type.equals("image")){
             viewSendImage.setVisibility(View.VISIBLE);
             Glide.with(this)
@@ -625,45 +548,18 @@ public class ChatActivity extends AppCompatActivity {
         }else {
             Toast.makeText(this, "Unsupported type: " + type, Toast.LENGTH_SHORT).show();
         }
+
     }
 
-private void onFileClick(String fileUrl, String fileName, String type) {
-        if(type.equals("file")) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Download File")
-                    .setMessage("Do you want to download this file?")
-                    .setPositiveButton("Download", (dialog, which) -> downloadFile(fileUrl, fileName))
-                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                    .show();
-        }
+private void onFileClick(String fileUrl, String fileName) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Download File")
+            .setMessage("Do you want to download this file?")
+            .setPositiveButton("Download", (dialog, which) -> FileHelper.downloadFile(fileUrl, fileName, this))
+            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+            .show();
 }
 
-    private void downloadFile(String fileUrl, String fileName) {
-        if (fileUrl == null) return;
-
-        try {
-            Uri fileUri = Uri.parse(fileUrl); // Parse the file URL into a URI
-
-            // Use DownloadManager to download the file
-            DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-            if (downloadManager == null) {
-                Toast.makeText(this, "Download Manager not available", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            DownloadManager.Request request = new DownloadManager.Request(fileUri);
-            request.setTitle((fileName != null ? fileName : "file"));
-            request.setDescription("File is being downloaded...");
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName != null ? fileName : "unknown_file"); // Save to Downloads folder
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-            // Enqueue the download
-            downloadManager.enqueue(request);
-            Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "Error downloading file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void uploadImageAndSaveToFirestore(final OnImageUploadCompleteListener listener) {
         // Firebase Storage reference
@@ -677,9 +573,10 @@ private void onFileClick(String fileUrl, String fileName, String type) {
             Log.d("Upload", "Image URI: " + imageUriSend.toString());
         }
 
-        // Tạo tên file duy nhất dựa trên timestamp hoặc UUID
-        String fileName = "chatrooms/" + chatroomId + "/images/image_" + System.currentTimeMillis();
-        StorageReference imageRef = storageReference.child(fileName);
+        String fileName = "image_" + System.currentTimeMillis();
+        Log.d("FileSelection", "File Selected: " + imageUriSend);
+
+        StorageReference imageRef = storageReference.child("chatrooms/" + chatroomId + "/images/" + fileName);
 
         // Tải ảnh từ imageUriSend lên Firebase Storage
         imageRef.putFile(imageUriSend)
@@ -692,26 +589,21 @@ private void onFileClick(String fileUrl, String fileName, String type) {
 
                         // Gọi listener để thông báo hoàn tất
                         if (listener != null) {
-                            listener.onImageUploadComplete(true, imageUrl);  // Thông báo upload thành công
+                            listener.onImageUploadComplete(true, imageUrl, fileName);
                         }
-
-                        // Gửi thông báo thành công
-                        Toast.makeText(getApplicationContext(), "Upload success", Toast.LENGTH_SHORT).show();
                     });
                 })
                 .addOnFailureListener(e -> {
-                    // Xử lý khi tải ảnh thất bại
                     Log.e("Upload", "Upload failed", e);
                     if (listener != null) {
-                        listener.onImageUploadComplete(false, null);  // Thông báo upload thất bại
+                        listener.onImageUploadComplete(false, null, null);
                     }
                     Toast.makeText(getApplicationContext(), "Upload failed", Toast.LENGTH_SHORT).show();
                 });
     }
 
-    // Định nghĩa interface cho callback
     public interface OnImageUploadCompleteListener {
-        void onImageUploadComplete(boolean success, String imageUrl);
+        void onImageUploadComplete(boolean success, String imageUrl, String fileName);
     }
 
     private void loading(Boolean isLoading){
@@ -722,8 +614,10 @@ private void onFileClick(String fileUrl, String fileName, String type) {
         }
         else {
             progressBar.setVisibility(View.INVISIBLE);
+            sendImageBtn.setVisibility(View.VISIBLE);
+            cancelSenImageBtn.setVisibility(View.VISIBLE);
+
         }
     }
 
 }
-
