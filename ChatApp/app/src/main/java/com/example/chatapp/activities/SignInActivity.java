@@ -64,11 +64,14 @@ public class SignInActivity extends Activity {
     private void setListeners() {
         binding.textCreateNewAccount.setOnClickListener(v ->
                 startActivity(new Intent(getApplicationContext(), SignUpActivity.class)));
+        binding.textForgotPassword.setOnClickListener(v ->
+                startActivity(new Intent(getApplicationContext(), ForgotPasswordActivity.class)));
         binding.buttonSignIn.setOnClickListener(v -> {
             if (isValidSignInDetails()){
                 signIn();
             }
         });
+
     }
 
     private void signIn(){
@@ -87,8 +90,6 @@ public class SignInActivity extends Activity {
                         preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getId());
                         preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
                         preferenceManager.putString(Constants.KEY_BIRTHDATE, documentSnapshot.getString(Constants.KEY_BIRTHDATE));
-                        preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString()); // Lưu email
-                        preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString()); // Lưu password
 
                         // Lấy URL ảnh từ Firestore và lưu vào PreferenceManager
                         String profileImageUrl = documentSnapshot.getString(Constants.KEY_IMAGE);
