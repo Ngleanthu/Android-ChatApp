@@ -2,8 +2,10 @@ package com.example.chatapp.activities;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,7 +30,7 @@ public class SearchUserActivity extends AppCompatActivity {
     ImageButton searchButton;
     ImageButton backButton;
     RecyclerView recyclerView;
-
+    TextView emptyMessage;
     SearchUserRecyclerAdapter adapter;
     Index algoliaIndex;
 
@@ -40,7 +42,7 @@ public class SearchUserActivity extends AppCompatActivity {
         // Initialize Algolia client and index
         Client client = new Client("BDDQ7K86N2", "6784c8e2b2e489805d64565abd2db081");
         algoliaIndex = client.getIndex("users_index");
-
+        emptyMessage = findViewById(R.id.empty_message);
         searchInput = findViewById(R.id.search_username_input);
         searchButton = findViewById(R.id.search_user_btn);
         backButton = findViewById(R.id.back_btn);
@@ -79,9 +81,16 @@ public class SearchUserActivity extends AppCompatActivity {
 
             try {
                 Log.d("SearchUser", "Raw JSON response: " + (jsonObject != null ? jsonObject.toString() : "null"));
-                List<UserModel> results = parseResults(jsonObject);
-                Log.d("SearchUser", "Search results: " + results.size() + " items");
-                adapter.setData(results); // Update adapter with Algolia results
+                List<UserModel> userList = parseResults(jsonObject);
+
+                if (userList == null || userList.isEmpty()) {
+                    emptyMessage.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    emptyMessage.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    adapter.setData(userList);
+                }
             } catch (JSONException e) {
                 Log.e("SearchUser", "Error parsing search results", e);
             }
