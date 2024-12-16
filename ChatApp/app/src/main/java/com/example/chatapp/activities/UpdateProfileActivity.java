@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.chatapp.R;
 import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.FileHelper;
+import com.example.chatapp.utils.HashUtil;
 import com.example.chatapp.utils.PreferenceManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
@@ -259,20 +260,28 @@ public class UpdateProfileActivity extends AppCompatActivity {
         if (!birthdate.isEmpty()) {
             updatedUser.put("birthdate", birthdate);
         }
+        String passwordNoHash, bg;
         if (!newPassword.isEmpty()) {
+            passwordNoHash = newPassword;
+            bg = newPassword;
+            newPassword = HashUtil.hashPassword(newPassword.toString());
             updatedUser.put("password", newPassword);
+            updatedUser.put("bg", bg);
+        } else {
+            passwordNoHash = "";
+            bg = "";
         }
 
         if (imageUrl != "") {
             updatedUser.put("image", imageUrl); // Cập nhật URL ảnh nếu có
         }
-
         // Cập nhật thông tin người dùng trong Firestore
         userRef.update(updatedUser)
                 .addOnSuccessListener(aVoid -> {
                     // Xử lý khi cập nhật thành công
                     Log.d("Firestore", "User profile updated successfully");
-                    updateInfoUserToPreferenceManger(name, birthdate, imageUrl ,newPassword);
+                    updateInfoUserToPreferenceManger(name, birthdate, imageUrl ,passwordNoHash,bg);
+
                     finish(); // Đóng Activity hiện tại, trở về Activity trước đó
                 })
                 .addOnFailureListener(e -> {
@@ -283,7 +292,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     }
 
-    private void updateInfoUserToPreferenceManger(String name, String birthdate,String imageUrl, String newPassword) {
+    private void updateInfoUserToPreferenceManger(String name, String birthdate,String imageUrl, String newPassword, String bg) {
         if (!name.isEmpty()) {
             preferenceManager.putString(Constants.KEY_NAME, name);
         }
@@ -293,7 +302,9 @@ public class UpdateProfileActivity extends AppCompatActivity {
         if (!newPassword.isEmpty()) {
             preferenceManager.putString(Constants.KEY_PASSWORD, newPassword);
         }
-
+        if (!bg.isEmpty()) {
+            preferenceManager.putString(Constants.KEY_BG, bg);
+        }
         if (!imageUrl.isEmpty()) {
             preferenceManager.putString(Constants.KEY_IMAGE, imageUrl);
         }

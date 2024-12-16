@@ -53,11 +53,12 @@
         android:id="@+id/chat_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_layout"
+        android:layout_above="@+id/progress_layout"
         android:layout_below="@id/toolbar"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="-2dp"
+        android:layout_marginBottom="2dp"
         android:foregroundGravity="center"
-        android:layout_marginBottom="0dp" />
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -94,14 +95,14 @@
         <EditText
             android:id="@+id/chat_message_input"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
+            android:layout_height="@dimen/_40sdp"
             android:layout_marginHorizontal="4dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/rounded_edit_text_no_stroke"
             android:hint="Write message"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
-            android:paddingStart="@dimen/_16sdp"
-            android:paddingEnd="@dimen/_16sdp"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingEnd="@dimen/_14sdp"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_13ssp"
             android:layout_toStartOf="@id/emoji_button"
@@ -117,6 +118,7 @@
             android:layout_centerInParent="true"
             android:layout_toStartOf="@id/message_send_button"
             android:id="@+id/emoji_button"
+            android:layout_marginLeft="@dimen/_5sdp"
             />
         <ImageButton
             android:layout_width="24dp"
@@ -127,6 +129,7 @@
             android:scaleType="centerInside"
             android:id="@+id/message_send_button"
             android:background="@android:color/transparent"
+            android:layout_marginLeft="@dimen/_5sdp"
             />
 
     </RelativeLayout>
@@ -138,6 +141,7 @@
     android:visibility="gone"
     app:emojiGridColumns="7"
     android:layout_alignParentBottom="true"
+
     />
 
     <FrameLayout
@@ -204,10 +208,50 @@
                 android:layout_height="@dimen/_25sdp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:outlineAmbientShadowColor="@color/white_color"
+                android:indeterminateTint="@color/white_color"
                 android:visibility="invisible"/>
         </LinearLayout>
 
+
+
     </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_layout"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_above="@+id/bottom_layout"
+
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+
+            <!-- ProgressBar -->
+            <ProgressBar
+                android:id="@+id/progressBarFile"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/primary_dark" />
+
+            <!-- Hint TextView -->
+            <TextView
+                android:id="@+id/progressHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="sending ..."
+                android:textSize="14sp"
+                android:textColor="@color/primary_dark" />
+        </LinearLayout>
+
+    </FrameLayout>
+
 </RelativeLayout>
 

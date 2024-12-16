@@ -3,31 +3,22 @@ import static com.example.chatapp.utils.YoutubeUtil.addYouTubeWebView;
 import static com.example.chatapp.utils.YoutubeUtil.containsYouTubeLink;
 import static com.example.chatapp.utils.YoutubeUtil.extractYouTubeId;
 
-
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.models.ChatMessageModel;
+import com.example.chatapp.utils.MediaUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -40,7 +31,6 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     public interface OnFileClickListener {
         void onFileClick(String fileUrl, String fileName);
     }
-
     // Constructor có thêm currentUserId
     public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatMessageModel> options, Context context, String currentUserId, OnFileClickListener listener) {
         super(options);
@@ -63,10 +53,10 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
             if (model.getType() != null && model.getType().equals("image")) {
                 Log.d("ChatRecyclerAdapter", "Image message: " + model.getFileUrl());
-                addImageToLayout(holder.rightChatLayout, model.getFileUrl(), context);
+                MediaUtil.addImageToLayout(holder.rightChatLayout, model.getFileUrl() ,model.getFileName() , context, false);
             }
             else if (model.getType() != null &&  model.getType().equals("video")) {
-                addVideoToLayout(holder.rightChatLayout, model.getFileUrl(), context);
+                MediaUtil.addVideoToLayout(holder.rightChatLayout,model.getFileUrl() ,model.getFileName(),context,  false);
             }
             else if (model.getType() != null && model.getType().equals("file")){
                 // If user send file
@@ -101,10 +91,10 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             holder.rightChatLayout.setVisibility(View.GONE);
 
             if (model.getType() != null &&  model.getType().equals("image")) {
-                addImageToLayout(holder.leftChatLayout, model.getFileUrl(), context);
+                MediaUtil.addImageToLayout(holder.leftChatLayout, model.getFileUrl(), model.getFileName(), context, false);
             } else if (model.getType() != null &&  model.getType().equals("video")) {
 
-                addVideoToLayout(holder.leftChatLayout, model.getFileUrl(), context);
+                MediaUtil.addVideoToLayout(holder.leftChatLayout, model.getFileUrl(), model.getFileName(), context, false);
             } else if (model.getType() != null && model.getType().equals("file")){
                 // If user send file
                 // Add message text
@@ -167,135 +157,13 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
         ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);
-            mainLayout = itemView.findViewById(R.id.main); // Tham chiếu đến mainLayout
+            mainLayout = itemView.findViewById(R.id.main);
             leftChatLayout = itemView.findViewById(R.id.left_chat_layout);
             rightChatLayout = itemView.findViewById(R.id.right_chat_layout);
             leftChatTextView = itemView.findViewById(R.id.left_chat_textview);
             rightChatTextView = itemView.findViewById(R.id.right_chat_textview);
             seenTextView = itemView.findViewById(R.id.seen_textview);
         }
-    }
-
-
-    public static void addImageToLayout(LinearLayout parentLayout, String imageUrl, Context context) {
-        // Lấy kích thước màn hình
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int screenWidth = displayMetrics.widthPixels;
-        int screenHeight = displayMetrics.heightPixels;
-
-        // Tính toán width và height theo tỷ lệ phần trăm
-        int width = (int) (screenWidth * 0.7);
-        int height = (int) (screenHeight * 0.3);
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                width,
-                height
-        );
-        if (imageUrl == null || imageUrl.isEmpty()) {
-            Log.e("ImageView", "Invalid image URL.");
-            return;
-        }
-
-        // Tạo một ImageView mới
-        ImageView imageView = new ImageView(context);
-        imageView.setLayoutParams(layoutParams);
-
-        Glide.with(context)
-                .load(imageUrl)
-                .placeholder(R.drawable.background_input)
-                .error(R.drawable.background_icon)
-                .into(imageView);
-
-        parentLayout.addView(imageView);
-    }
-
-//    public static void addVideoToLayout(LinearLayout parentLayout, String videoUrl, Context context) {
-//        if (videoUrl == null || videoUrl.isEmpty()) {
-//            Log.e("VideoView", "Invalid video URL.");
-//            return;
-//        }
-//        Log.e("VideoView", "Show view.");
-//        // Lấy kích thước màn hình
-//        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-//        int screenWidth = displayMetrics.widthPixels;
-//        int screenHeight = displayMetrics.heightPixels;
-//
-//        // Tính toán width và height theo tỷ lệ phần trăm
-//        int width = (int) (screenWidth * 0.7);
-//        int height = (int) (screenHeight * 0.4);
-//
-//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-//                width,
-//                height
-//        );
-//
-//        // Tạo VideoView
-//        VideoView videoView = new VideoView(context);
-//        videoView.setLayoutParams(layoutParams);
-//
-//        // Thiết lập URL video
-//        videoView.setVideoPath(videoUrl);
-//
-//        // Thêm bộ điều khiển media (tua, play/pause)
-//        MediaController mediaController = new MediaController(context);
-//        mediaController.setAnchorView(videoView);
-//        videoView.setMediaController(mediaController);
-//
-//        // Bắt đầu phát video khi sẵn sàng
-//        videoView.setOnPreparedListener(mediaPlayer -> videoView.start());
-//
-//        // Thêm VideoView vào LinearLayout
-//        parentLayout.addView(videoView);
-//    }
-//
-
-
-    public static void addVideoToLayout(LinearLayout parentLayout, String videoUrl, Context context) {
-        if (videoUrl == null || videoUrl.isEmpty()) {
-            Log.e("VideoView", "Invalid video URL.");
-            return;
-        }
-        Log.e("VideoView", "Show view.");
-        // Lấy kích thước màn hình
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int screenWidth = displayMetrics.widthPixels;
-        int screenHeight = displayMetrics.heightPixels;
-
-        // Tính toán width và height theo tỷ lệ phần trăm
-        int width = (int) (screenWidth * 0.7);
-        int height = (int) (screenHeight * 0.4);
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                width,
-                height
-        );
-
-        // Tạo VideoView
-        VideoView videoView = new VideoView(context);
-        videoView.setLayoutParams(layoutParams);
-
-        // Thiết lập URL video
-        videoView.setVideoPath(videoUrl);
-
-        // Thêm bộ điều khiển media (tua, play/pause)
-        MediaController mediaController = new MediaController(context);
-        mediaController.setAnchorView(videoView);
-        videoView.setMediaController(mediaController);
-
-        // Bắt đầu phát video khi sẵn sàng
-        videoView.setOnPreparedListener(mediaPlayer -> videoView.start());
-
-        // Thêm VideoView vào LinearLayout
-        parentLayout.addView(videoView);
-
-        // Thêm sự kiện click để chuyển sang toàn màn hình
-        videoView.setOnClickListener(v -> {
-            LinearLayout.LayoutParams newLayoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
-            );
-            videoView.setLayoutParams(newLayoutParams);  // Cập nhật kích thước thành toàn màn hình
-        });
     }
 
 }

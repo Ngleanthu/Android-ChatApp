@@ -18,7 +18,17 @@
           <theme>@style/Theme.ChatApp</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_full_screen_media.xml">
+        <config>
+          <theme>@style/Theme.ChatApp</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_main.xml">
+        <config>
+          <theme>@style/Theme.ChatApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_reset_password.xml">
         <config>
           <theme>@style/Theme.ChatApp</theme>
         </config>
@@ -43,6 +53,11 @@
           <theme>@style/Theme.ChatApp</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/profile_pic_view.xml">
+        <config>
+          <theme>@style/Theme.ChatApp</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/recent_chat_recycler_row.xml">
         <config>
           <theme>@style/Theme.ChatApp</theme>
@@ -58,6 +73,11 @@
           <theme>@style/Theme.ChatApp</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/show_profile_user.xml">
+        <config>
+          <theme>@style/Theme.ChatApp</theme>
+        </config>
+      </layout>
     </layouts>
   </component>
   <component name="AutoImportSettings">
@@ -65,20 +85,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2a36e8fe-e4dd-4452-a523-bfe84d12eaa0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/drawable/rounded_edit_text_no_stroke.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ForgotPasswordActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ForgotPasswordActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ProfileActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/UpdateProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/UpdateProfileActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/ChatRecyclerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/ChatRecyclerAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/drawable/icon_back.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/drawable/icon_back.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ResetPasswordActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ResetPasswordActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/RecentCharRecyclerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/RecentCharRecyclerAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/MediaUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/MediaUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activitty_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activitty_chat.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_update_profile.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_update_profile.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_reset_password.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_reset_password.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/values/colors.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +106,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\MSI GF63\.android\avd\Medium_Phone_API_35.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\MSI GF63\.android\avd\Medium_Phone_API_35_2.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/ChatApp">
       <ProjectState />
@@ -136,6 +154,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="layoutResourceFile" />
+        <option value="resourceFile" />
       </list>
     </option>
   </component>
@@ -179,7 +199,7 @@
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Mobile/DoAn_25-11/Android-ChatApp",
+    "last_opened_file_path": "D:/Mobile/DoAn_1612/Android-ChatApp",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -187,6 +207,10 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="android.template.-336185133">
+      <recent name="com.example.chatapp.activities" />
+      <recent name="com.example.chatapp" />
+    </key>
     <key name="android.template.-596043369">
       <recent name="com.example.chatapp" />
     </key>
