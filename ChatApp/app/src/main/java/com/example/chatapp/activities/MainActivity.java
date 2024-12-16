@@ -1,16 +1,11 @@
 package com.example.chatapp.activities;
 
-
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-
-
 import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
 import com.example.chatapp.databinding.ActivityMainBinding;
@@ -21,7 +16,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
@@ -56,30 +50,6 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("signOut", false)) {
             signOut();
         }
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        boolean isUpdateRun = false;
-
-        if (!isUpdateRun) {
-            db.collection("chats")
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                db.collection("chats").document(document.getId())
-                                        .update("type", "text") // Giá trị mặc định
-                                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "Document updated: " + document.getId()))
-                                        .addOnFailureListener(e -> Log.e("Firestore", "Error updating document", e));
-                            }
-                            Log.d("Firestore", "Update complete!");
-                        } else {
-                            Log.e("Firestore", "Error fetching documents", task.getException());
-                        }
-                    });
-            isUpdateRun = true;
-        }
-
-
 
     }
 
@@ -130,8 +100,9 @@ public class MainActivity extends AppCompatActivity {
         documentReference.update(updates).addOnSuccessListener(unused -> {
             FirebaseAuth.getInstance().signOut();
             preferenceManager.clear();
-            startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-            finish();
+            Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }).addOnFailureListener(e -> showToast("Unable to sign out"));
 
     }
