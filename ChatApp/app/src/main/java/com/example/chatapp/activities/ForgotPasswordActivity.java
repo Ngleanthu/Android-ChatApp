@@ -31,8 +31,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private void setListeners() {
 
-        binding.buttonForgotPasswordBack.setOnClickListener(v ->
-                startActivity(new Intent(getApplicationContext(), SignInActivity.class)));
+        binding.buttonForgotPasswordBack.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
         binding.buttonReset.setOnClickListener(v -> {
             String email = binding.inputEmail.getText().toString().trim();
             if (isValidEmail(email)) {
@@ -82,12 +85,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                         // Email tồn tại trong hệ thống
                         showToast("Email verified. Proceed to reset your password.");
                         Intent intent = new Intent(getApplicationContext(), ResetPasswordActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.putExtra("EMAIL", email);
                         startActivity(intent);
                         loading(false);
                     } else {
                         // Email không tồn tại
                         showToast("No account found with this email.");
+                        loading(false);
                     }
                 });
     }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,9 +32,6 @@ public class MediaUtil {
             Log.e("ExoPlayer", "Invalid video URL.");
             return;
         }
-        Log.e("ExoPlayer", "Initializing video view.");
-
-        // Lấy kích thước màn hình
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int screenWidth = displayMetrics.widthPixels;
         int screenHeight = displayMetrics.heightPixels;
@@ -59,6 +57,52 @@ public class MediaUtil {
         ExoPlayer player = new ExoPlayer.Builder(context).build();
         playerView.setPlayer(player);
 
+        playerView.post(new Runnable() {
+            @Override
+            public void run() {
+                View previousButton = playerView.findViewById(androidx.media3.ui.R.id.exo_prev);
+                View nextButton = playerView.findViewById(androidx.media3.ui.R.id.exo_next);
+                if(previousButton != null){
+                    previousButton.setVisibility(View.GONE);
+                }
+                if(previousButton != null){
+                    nextButton.setVisibility(View.GONE);
+                }
+                View fullScreenButton = playerView.findViewById(androidx.media3.ui.R.id.exo_fullscreen);
+                if (fullScreenButton != null && fullScreenButton instanceof ImageButton) {
+                    ImageButton fullScreenImageButton = (ImageButton) fullScreenButton;
+
+                    if (showFullScreen) {
+                        fullScreenImageButton.setImageResource(R.drawable.baseline_fullscreen_exit_24);
+                    } else {
+                        fullScreenImageButton.setImageResource(R.drawable.baseline_fullscreen_24);
+                    }
+
+                    fullScreenButton.setOnClickListener(v -> {
+                        if (showFullScreen) {
+                            // Thoát toàn màn hình
+                            if (context instanceof Activity) {
+                                Activity activity = (Activity) context;
+                                activity.setResult(Activity.RESULT_OK);
+                                activity.finish();
+                            }
+                        } else {
+                            // Chuyển sang toàn màn hình
+                            Intent intent = new Intent(context, FullScreenMediaActivity.class);
+                            intent.putExtra("VIDEO_URL", videoUrl);
+                            intent.putExtra("FILE_NAME", fileName);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        }
+                    });
+
+                    // Đảm bảo nút fullscreen hiển thị
+                    fullScreenButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
         // Tạo MediaItem và thiết lập video URL
         MediaItem mediaItem = MediaItem.fromUri(videoUrl);
         player.setMediaItem(mediaItem);
@@ -73,28 +117,6 @@ public class MediaUtil {
                 FrameLayout.LayoutParams.MATCH_PARENT
         ));
         videoContainer.addView(playerView);
-
-        // Tạo nút thu phóng
-        ImageButton fullScreenButton = new ImageButton(context);
-        fullScreenButton.setImageResource(showFullScreen
-                ? R.drawable.baseline_fullscreen_exit_24
-                : R.drawable.baseline_fullscreen_24); // Icon fullscreen hoặc exit fullscreen
-        fullScreenButton.setBackgroundColor(0); // Xóa nền
-        fullScreenButton.setContentDescription("Fullscreen Button");
-
-
-
-        // Thiết lập LayoutParams cho nút
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.gravity = Gravity.END | Gravity.BOTTOM;
-        params.setMargins(16, 16, 110, 16);
-        fullScreenButton.setLayoutParams(params);
-
-        videoContainer.addView(fullScreenButton);
-
 
         ImageButton downLoadButton = new ImageButton(context);
         downLoadButton.setImageResource(R.drawable.baseline_download_24);
@@ -123,27 +145,10 @@ public class MediaUtil {
                     .show();
 
         });
-        fullScreenButton.setOnClickListener(v -> {
-            if (showFullScreen) {
-                // Thoát toàn màn hình
-                if (context instanceof Activity) {
-                    Activity activity = (Activity) context;
-                    activity.setResult(Activity.RESULT_OK);
-                    activity.finish();
-                }
-            } else {
-                // Chuyển sang toàn màn hình
-                Intent intent = new Intent(context, FullScreenMediaActivity.class);
-                intent.putExtra("VIDEO_URL", videoUrl);
-                intent.putExtra("FILE_NAME", fileName);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-            }
-        });
-
         parentLayout.addView(videoContainer);
 
     }
+
 
 
     public static void addImageToLayout(LinearLayout parentLayout, String imageUrl, String fileName,  Context context, boolean showFullScreen) {
@@ -187,8 +192,6 @@ public class MediaUtil {
         imageContainer.addView(imageView);
 
         if(showFullScreen){
-
-
             // Thêm button X để thoát
             ImageButton closeButton = new ImageButton(context);
             closeButton.setImageResource(R.drawable.baseline_close_24);
