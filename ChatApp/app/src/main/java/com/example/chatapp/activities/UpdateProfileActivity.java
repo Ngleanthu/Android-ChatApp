@@ -130,7 +130,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 new FileHelper.FileHelperCallback() {
                     @Override
                     public void onFileSelected(Uri fileUri) {
-                        Toast.makeText(UpdateProfileActivity.this, "File selected: " + fileUri, Toast.LENGTH_SHORT).show();
+                        Log.d("File Selected", "File selected: " + fileUri);
                     }
 
                     @Override
