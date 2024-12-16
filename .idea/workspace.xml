@@ -179,6 +179,9 @@
     &quot;accountId&quot;: &quot;ff201a32-c9e5-47a0-8d49-a82951e12d6d&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -205,12 +208,8 @@
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "preferences.keymap"
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
-    <key name="android.template.-336185133">
-      <recent name="com.example.chatapp.activities" />
-      <recent name="com.example.chatapp" />
-    </key>
     <key name="android.template.-596043369">
       <recent name="com.example.chatapp" />
     </key>

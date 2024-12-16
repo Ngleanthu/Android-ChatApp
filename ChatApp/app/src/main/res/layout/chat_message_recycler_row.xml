@@ -39,6 +39,15 @@
         android:id="@+id/right_chat_layout"
         android:orientation="vertical"
         >
+        <ImageButton
+            android:id="@+id/audio_play_btn_right"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/baseline_emoji_emotions_24"
+            android:background="@android:color/transparent"
+            android:contentDescription="Play Audio"
+            android:visibility="gone"
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
