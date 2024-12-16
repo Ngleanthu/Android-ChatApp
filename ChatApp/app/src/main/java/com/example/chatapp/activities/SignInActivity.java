@@ -27,12 +27,9 @@ public class SignInActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String userId = null;
-        if(getIntent().getExtras() != null) {
-            // from notification
-            userId = getIntent().getExtras().getString(Constants.KEY_USER_ID);
-        }
-        if (userId != null) {
+        if (getIntent() != null && getIntent().hasExtra(Constants.KEY_USER_ID)) {
+            String userId = getIntent().getStringExtra(Constants.KEY_USER_ID);
+
             FirebaseUtil.allUserCollectionReference().document(userId).get().addOnCompleteListener(
                     task -> {
 
@@ -40,8 +37,9 @@ public class SignInActivity extends Activity {
                         //navigate to chat room
                         Intent intent = new Intent(this, ChatActivity.class);
                         AndroidUtil.passUserModelAsIntent(intent, model);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        finish();
                     }
             );
         }
