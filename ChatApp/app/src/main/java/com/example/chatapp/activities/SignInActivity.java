@@ -87,7 +87,6 @@ public class SignInActivity extends Activity {
                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN,true);
                         preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
                         preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
-                        preferenceManager.putString(Constants.KEY_BG, binding.inputPassword.getText().toString());
                         preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getId());
                         preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
                         preferenceManager.putString(Constants.KEY_BIRTHDATE, documentSnapshot.getString(Constants.KEY_BIRTHDATE));

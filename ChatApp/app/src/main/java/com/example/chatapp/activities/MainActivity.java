@@ -17,6 +17,7 @@ import com.example.chatapp.databinding.ActivityMainBinding;
 import com.example.chatapp.utils.Constants;
 import com.example.chatapp.utils.PreferenceManager;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         HashMap<String, Object> updates = new HashMap<>();
         updates.put(Constants.KEY_FCM_TOKEN, FieldValue.delete());
         documentReference.update(updates).addOnSuccessListener(unused -> {
+            FirebaseAuth.getInstance().signOut();
             preferenceManager.clear();
             startActivity(new Intent(getApplicationContext(), SignInActivity.class));
             finish();

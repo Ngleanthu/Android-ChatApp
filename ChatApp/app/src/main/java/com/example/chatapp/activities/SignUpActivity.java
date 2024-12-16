@@ -128,7 +128,6 @@ public class SignUpActivity extends Activity {
                     HashMap<String, Object> user = new HashMap<>();
                     user.put(Constants.KEY_NAME, binding.inputName.getText().toString());
                     user.put(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
-                    user.put(Constants.KEY_BG, binding.inputPassword.getText().toString());
                     user.put(Constants.KEY_PASSWORD, HashUtil.hashPassword(binding.inputPassword.getText().toString()));
                     user.put(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());
                     user.put(Constants.KEY_IMAGE, "");
@@ -143,7 +142,6 @@ public class SignUpActivity extends Activity {
 
                                 preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
                                 preferenceManager.putString(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
-                                preferenceManager.putString(Constants.KEY_BG, binding.inputPassword.getText().toString());
                                 preferenceManager.putString(Constants.KEY_USER_ID, userId);
                                 preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
                                 preferenceManager.putString(Constants.KEY_BIRTHDATE, binding.inputBirthdate.getText().toString());

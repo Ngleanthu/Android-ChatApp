@@ -82,6 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp"
             android:animateLayoutChanges="true">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSignIn"
                 android:layout_width="match_parent"
@@ -91,13 +92,14 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
-                app:cornerRadius="@dimen/_10sdp"/>
+                app:cornerRadius="@dimen/_10sdp" />
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_25sdp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
         </FrameLayout>
 
         <com.google.android.material.button.MaterialButton
