@@ -70,4 +70,13 @@
             android:visibility="gone"
             />
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/player_video_chat"
+        android:visibility="gone">
+
+    </LinearLayout>
 </RelativeLayout>
