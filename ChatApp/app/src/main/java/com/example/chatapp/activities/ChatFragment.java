@@ -36,7 +36,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Khởi tạo PreferenceManager trong onCreate hoặc onCreateView
         preferenceManager = new PreferenceManager(requireContext());
     }
 
@@ -60,10 +59,8 @@ public class ChatFragment extends Fragment {
         FirestoreRecyclerOptions<ChatRoomModel> options = new FirestoreRecyclerOptions.Builder<ChatRoomModel>()
                 .setQuery(query, ChatRoomModel.class).build();
 
-        // Kiểm tra danh sách trả về
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
-                // In danh sách lấy từ Firestore
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     ChatRoomModel chatRoom = document.toObject(ChatRoomModel.class);
                     Log.d("FirestoreData", "ChatRoom: " + chatRoom.toString());

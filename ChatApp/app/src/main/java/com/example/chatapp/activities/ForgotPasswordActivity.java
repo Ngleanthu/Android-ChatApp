@@ -2,7 +2,6 @@ package com.example.chatapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
@@ -11,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chatapp.databinding.ActivityForgotPasswordBinding;
 import com.example.chatapp.utils.Constants;
-import com.example.chatapp.utils.HashUtil;
 import com.example.chatapp.utils.PreferenceManager;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -60,18 +58,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         return true;
     }
 
-    private void saveUserDataToPreferences(DocumentSnapshot documentSnapshot) {
-        preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getId());
-        preferenceManager.putString(Constants.KEY_EMAIL, documentSnapshot.getString(Constants.KEY_EMAIL));
-        preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
-        preferenceManager.putString(Constants.KEY_BIRTHDATE, documentSnapshot.getString(Constants.KEY_BIRTHDATE));
-        preferenceManager.putString(Constants.KEY_PASSWORD, documentSnapshot.getString(Constants.KEY_PASSWORD));
-        preferenceManager.putString(Constants.KEY_BG, documentSnapshot.getString(Constants.KEY_BG));
-        String profileImageUrl = documentSnapshot.getString(Constants.KEY_IMAGE);
-        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-            preferenceManager.putString(Constants.KEY_IMAGE, profileImageUrl);
-        }
-    }
     private void handlePasswordReset() {
         loading(true);
         FirebaseFirestore database = FirebaseFirestore.getInstance();

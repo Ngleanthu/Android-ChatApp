@@ -1,7 +1,6 @@
 package com.example.chatapp.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;

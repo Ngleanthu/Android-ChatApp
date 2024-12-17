@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         String userAvatarUrl = preferenceManager.getString(Constants.KEY_IMAGE);
         Glide.with(this)
                 .load(userAvatarUrl)
-                .placeholder(R.drawable.ic_default_profile_foreground) // Hình ảnh placeholder khi đang tải ảnh
+                .placeholder(R.mipmap.ic_default_profile) // Hình ảnh placeholder khi đang tải ảnh
                 .into(binding.imageProfile); // ImageView để hiển thị ảnh
 
     }

@@ -12,7 +12,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 
 import androidx.annotation.OptIn;
 import androidx.core.content.ContextCompat;
@@ -81,14 +80,12 @@ public class MediaUtil {
 
                     fullScreenButton.setOnClickListener(v -> {
                         if (showFullScreen) {
-                            // Thoát toàn màn hình
                             if (context instanceof Activity) {
                                 Activity activity = (Activity) context;
                                 activity.setResult(Activity.RESULT_OK);
                                 activity.finish();
                             }
                         } else {
-                            // Chuyển sang toàn màn hình
                             Intent intent = new Intent(context, FullScreenMediaActivity.class);
                             intent.putExtra("VIDEO_URL", videoUrl);
                             intent.putExtra("FILE_NAME", fileName);
@@ -96,8 +93,6 @@ public class MediaUtil {
                             context.startActivity(intent);
                         }
                     });
-
-                    // Đảm bảo nút fullscreen hiển thị
                     fullScreenButton.setVisibility(View.VISIBLE);
                 }
             }
@@ -121,7 +116,7 @@ public class MediaUtil {
 
         ImageButton downLoadButton = new ImageButton(context);
         downLoadButton.setImageResource(R.drawable.baseline_download_24);
-        downLoadButton.setBackgroundColor(0); // Xóa nền
+        downLoadButton.setBackgroundColor(0);
         downLoadButton.setContentDescription("Down video");
 
         // Thiết lập LayoutParams cho nút

@@ -30,9 +30,6 @@ public class YoutubeUtil {
                 (int) (200 * context.getResources().getDisplayMetrics().density) // Height: 250dp converted to pixels
         );
 
-//        String video = "<iframe width=\"100%\" height=\"100%\" src=\"\"https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/facebook/videos/491258620331979"+"\""+ "title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" allowfullscreen></iframe>";
-//        String video = "<iframe width=\"100%\" height=\"100%\" src=\"https://www.facebook.com/hamzyeating/videos/491258620331979/\""+ "title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" allowfullscreen></iframe>";
-
         WebView webView = new WebView(context);
 
         String video = "<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/"+videoId+"\""+ "title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" allowfullscreen></iframe>";

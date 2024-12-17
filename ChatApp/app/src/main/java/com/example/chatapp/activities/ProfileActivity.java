@@ -41,18 +41,15 @@ public class ProfileActivity extends AppCompatActivity {
 
        getCurrentUserDetails();
 
-        // Thiết lập sự kiện click cho nút Update Profile
         btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProfileActivity.this, UpdateProfileActivity.class);
-                // Chuyển đến UpdateProfileActivity
                 startActivity(intent);
                 getCurrentUserDetails();
 
             }
         });
-
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,16 +59,15 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void getCurrentUserDetails() {
-        String name = preferenceManager.getString(Constants.KEY_NAME); // Tên người dùng
-        String email = preferenceManager.getString(Constants.KEY_EMAIL); // Email người dùng
-        String birthdate = preferenceManager.getString(Constants.KEY_BIRTHDATE); // Ngày sinh người dùng
+        String name = preferenceManager.getString(Constants.KEY_NAME);
+        String email = preferenceManager.getString(Constants.KEY_EMAIL);
+        String birthdate = preferenceManager.getString(Constants.KEY_BIRTHDATE);
 
         String userAvatarUrl = preferenceManager.getString(Constants.KEY_IMAGE);
         if (userAvatarUrl != null) {
-            // Thiết lập hình ảnh đại diện nếu có URL
             Glide.with(this)
                     .load(userAvatarUrl)
-                    .placeholder(R.mipmap.ic_default_profile) // Hình ảnh mặc định
+                    .placeholder(R.mipmap.ic_default_profile)
                     .into(imageProfile);
         }
         // Hiển thị thông tin lên các TextView
