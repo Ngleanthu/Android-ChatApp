@@ -2,9 +2,17 @@
 <project version="4">
   <component name="AndroidLayouts">
     <shared>
-      <config />
+      <config>
+        <device id="_android_virtual_device_id_Medium_Phone_API_35" />
+        <device id="_android_virtual_device_id_Small_Phone_API_35" />
+      </config>
     </shared>
     <layouts>
+      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_forgot_password.xml">
+        <config>
+          <theme>@style/Theme.ChatApp</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_update_profile.xml">
         <config>
           <theme>@style/Theme.ChatApp</theme>
@@ -16,6 +24,11 @@
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/search_user.xml">
+        <config>
+          <theme>@style/Theme.ChatApp</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/search_user_recycle_row.xml">
         <config>
           <theme>@style/Theme.ChatApp</theme>
         </config>
@@ -34,19 +47,9 @@
     <list default="true" id="a5a90e11-821f-4b36-a61a-f945330b2a98" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ForgotPasswordActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ForgotPasswordActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/FullScreenMediaActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/FullScreenMediaActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ProfileActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ResetPasswordActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ResetPasswordActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/UpdateProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/UpdateProfileActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/RecentCharRecyclerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/RecentCharRecyclerAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/SearchUserRecyclerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/SearchUserRecyclerAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/MediaUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/MediaUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/YoutubeUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/YoutubeUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_update_profile.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_update_profile.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/show_profile_user.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/show_profile_user.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +59,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\MSI GF63\.android\avd\Medium_Phone_API_35_2.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\MSI GF63\.android\avd\Medium_Phone_API_35.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/ChatApp">
       <ProjectState />
@@ -130,19 +133,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Mobile/DoAn_1712_2/Android-ChatApp&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Android App.app.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "fix-avatar",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Mobile/DoAn_1712_2/Android-ChatApp"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="ChatApp.app.main" />

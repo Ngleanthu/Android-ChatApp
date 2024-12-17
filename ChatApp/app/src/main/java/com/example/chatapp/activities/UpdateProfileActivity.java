@@ -370,10 +370,12 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     private void loading(Boolean isLoading){
         if(isLoading){
+            btnBack.setVisibility(View.INVISIBLE);
             buttonUpdateProfile.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
         }
         else {
+            btnBack.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
             buttonUpdateProfile.setVisibility(View.VISIBLE);
         }
