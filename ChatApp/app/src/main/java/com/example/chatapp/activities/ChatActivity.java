@@ -515,7 +515,7 @@ public class ChatActivity extends AppCompatActivity   {
     private void handleFileSelection(Uri fileUri, String type) {
         String message = currentUserName + " sent an attachment";
 
-        if (type.equals("file") || type.equals("video")) {
+        if (type.equals("file") || type.equals("video")|| type.equals("audio")) {
             viewLoading.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) recyclerView.getLayoutParams();
             params.addRule(RelativeLayout.ABOVE, R.id.progress_layout);
