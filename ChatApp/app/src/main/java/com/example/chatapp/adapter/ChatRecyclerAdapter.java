@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,7 +28,6 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     private final Context context;
     private final String currentUserId;  // Khai báo biến thành viên
     private final OnFileClickListener fileClickListener;
-
     public interface OnFileClickListener {
         void onFileClick(String fileUrl, String fileName);
     }
@@ -38,7 +38,6 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
         this.currentUserId = currentUserId;  //000 Lưu giá trị vào biến thành viên
         this.fileClickListener = listener;
     }
-
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
         Log.d("chat apd", "setupChatRecyclerView: " + currentUserId);
@@ -57,6 +56,10 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             }
             else if (model.getType() != null &&  model.getType().equals("video")) {
                 MediaUtil.addVideoToLayout(holder.rightChatLayout,model.getFileUrl() ,model.getFileName(),context,  false);
+            }
+            else if (model.getType() != null && model.getType().equals("audio")) {
+                Log.d("Audio link", model.getFileUrl());
+                MediaUtil.addAudioButtonToLayout(holder.rightChatLayout, model.getFileUrl(), context);
             }
             else if (model.getType() != null && model.getType().equals("file")){
                 // If user send file
@@ -93,9 +96,12 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             if (model.getType() != null &&  model.getType().equals("image")) {
                 MediaUtil.addImageToLayout(holder.leftChatLayout, model.getFileUrl(), model.getFileName(), context, false);
             } else if (model.getType() != null &&  model.getType().equals("video")) {
-
                 MediaUtil.addVideoToLayout(holder.leftChatLayout, model.getFileUrl(), model.getFileName(), context, false);
-            } else if (model.getType() != null && model.getType().equals("file")){
+            }
+            else if (model.getType() != null && model.getType().equals("audio")) {
+                MediaUtil.addAudioButtonToLayout(holder.leftChatLayout, model.getFileUrl(), context);
+            }
+            else if (model.getType() != null && model.getType().equals("file")){
                 // If user send file
                 // Add message text
                 TextView messageView = new TextView(context);

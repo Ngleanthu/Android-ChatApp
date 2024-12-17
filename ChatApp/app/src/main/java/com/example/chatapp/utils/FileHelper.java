@@ -65,6 +65,9 @@ public class FileHelper {
                 case "video":
                     return ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_VIDEO)
                             == PackageManager.PERMISSION_GRANTED;
+                case "audio":
+                    return ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_AUDIO)
+                            == PackageManager.PERMISSION_GRANTED;
                 default:
                     // For general files (documents, etc.), fallback to older permissions
                     return true;
@@ -88,6 +91,9 @@ public class FileHelper {
                     break;
                 case "video":
                     permissions = new String[]{Manifest.permission.READ_MEDIA_VIDEO};
+                    break;
+                case "audio":
+                    permissions = new String[]{Manifest.permission.READ_MEDIA_AUDIO};
                     break;
                 default:
                     permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -113,6 +119,9 @@ public class FileHelper {
                 break;
             case "video":
                 intent.setType("video/*");
+                break;
+            case "audio":
+                intent.setType("audio/*");
                 break;
             default:
                 intent.setType("*/*");
@@ -160,6 +169,8 @@ public class FileHelper {
             return "image";
         } else if (mimeType.startsWith("video/")) {
             return "video";
+        } else if (mimeType.startsWith("audio/")) {
+            return "audio";
         } else {
             return "file";
         }

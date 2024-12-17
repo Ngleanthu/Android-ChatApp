@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 
 import androidx.annotation.OptIn;
 import androidx.core.content.ContextCompat;
@@ -250,5 +251,28 @@ public class MediaUtil {
             }
         });
         parentLayout.addView(imageContainer);
+    }
+
+    public static void addAudioButtonToLayout(LinearLayout parentLayout, String audioUrl, Context context) {
+        if (audioUrl == null || audioUrl.isEmpty()) {
+            Log.e("MediaUtil", "Invalid audio URL.");
+            return;
+        }
+
+        // Create an instance of AudioPlayerUtil with a listener for state changes
+        AudioPlayerUtil audioPlayerUtil = new AudioPlayerUtil(new AudioPlayerUtil.OnAudioStateChangeListener() {
+            @Override
+            public void onAudioStart() {
+                Log.d("MediaUtil", "Audio playback started.");
+            }
+
+            @Override
+            public void onAudioStop() {
+                Log.d("MediaUtil", "Audio playback stopped.");
+            }
+        });
+
+        // Use AudioPlayerUtil to add the audio player to the parent layout
+        audioPlayerUtil.addAudioPlayerToLayout(parentLayout, audioUrl, context);
     }
 }
