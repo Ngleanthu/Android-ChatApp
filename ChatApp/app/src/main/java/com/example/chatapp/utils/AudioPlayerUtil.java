@@ -13,10 +13,27 @@ import java.io.IOException;
 
 public class AudioPlayerUtil {
 
-    private static AudioPlayerUtil instance;
     private MediaPlayer mediaPlayer;
     private int duration;
-    private String currentAudioUrl;
+    private String audioUrl;
+    ImageButton playButton;
+    SeekBar seekBar;
+
+    public SeekBar getSeekBar() {
+        return seekBar;
+    }
+
+    public void setSeekBar(SeekBar seekBar) {
+        this.seekBar = seekBar;
+    }
+
+    public ImageButton getPlayButton() {
+        return playButton;
+    }
+
+    public void setPlayButton(ImageButton playButton) {
+        this.playButton = playButton;
+    }
 
     public interface OnAudioStateChangeListener {
         void onAudioStart();
@@ -25,31 +42,17 @@ public class AudioPlayerUtil {
 
     private OnAudioStateChangeListener stateChangeListener;
 
-    public void setOnAudioStateChangeListener(OnAudioStateChangeListener listener) {
-        this.stateChangeListener = listener;
-    }
-    // Private constructor to enforce Singleton
-    private AudioPlayerUtil() {}
-
-    // Get Singleton instance
-    public static synchronized AudioPlayerUtil getInstance() {
-        if (instance == null) {
-            instance = new AudioPlayerUtil();
-        }
-        return instance;
+    public AudioPlayerUtil(OnAudioStateChangeListener stateChangeListener) {
+        this.stateChangeListener = stateChangeListener;
     }
 
     public void addAudioPlayerToLayout(LinearLayout parentLayout, String audioUrl, Context context) {
-        if (audioUrl == null || audioUrl.isEmpty()) {
-            Log.e("AudioPlayerUtil", "Invalid audio URL.");
-            return;
-        }
-
+        this.audioUrl = audioUrl;
+        PlaybackManager.getInstance().stopActivePlayback();
         // Create a horizontal LinearLayout to hold the audio button and SeekBar
         LinearLayout audioLayout = new LinearLayout(context);
         audioLayout.setOrientation(LinearLayout.HORIZONTAL);
 
-        // Set layout parameters for the audio layout
         LinearLayout.LayoutParams audioLayoutParams = new LinearLayout.LayoutParams(
                 500,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -57,37 +60,66 @@ public class AudioPlayerUtil {
         audioLayout.setLayoutParams(audioLayoutParams);
 
         // Create the ImageButton (audio play button)
-        ImageButton audioPlayButton = new ImageButton(context);
-        audioPlayButton.setLayoutParams(new LinearLayout.LayoutParams(50, 50));
-        audioPlayButton.setImageResource(R.drawable.baseline_play_arrow_24);
-        audioPlayButton.setContentDescription("Play Audio");
-        audioPlayButton.setBackground(null);
-
-        // Create the SeekBar
-        SeekBar seekBar = new SeekBar(context);
-        seekBar.setMax(100);
+        playButton = new ImageButton(context);
+        playButton.setLayoutParams(new LinearLayout.LayoutParams(50, 50));
+        seekBar = new SeekBar(context);
         seekBar.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1
         ));
 
-        // Add the audio button and SeekBar to the audio layout
-        audioLayout.addView(audioPlayButton);
-        audioLayout.addView(seekBar);
+        configureUI(audioLayout, parentLayout, playButton, seekBar);
 
-        // Add the audio layout to the parent layout
-        parentLayout.addView(audioLayout);
-
-        // Handle play/pause button click
-        audioPlayButton.setOnClickListener(v -> {
-            if (mediaPlayer != null && mediaPlayer.isPlaying() && currentAudioUrl != null && currentAudioUrl.equals(audioUrl)) {
-                stopAudio(audioPlayButton, seekBar);
+        // Set up click listener for the play button
+        playButton.setOnClickListener(v -> {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                stopAudio(seekBar, playButton);
             } else {
-                playAudio(audioUrl, seekBar, audioPlayButton, context);
+                PlaybackManager.getInstance().stopActivePlayback(); // Stop any currently playing audio
+                playAudio(audioUrl, seekBar, playButton, context);
             }
         });
 
-        // Handle SeekBar interactions
+        // Set up SeekBar listener
+        setupSeekBarListener(seekBar, playButton);
+    }
+
+    private void playAudio(String audioUrl, SeekBar seekBar, ImageButton playButton, Context context) {
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(audioUrl);
+            mediaPlayer.setOnPreparedListener(mp -> {
+                mediaPlayer.start();
+                duration = mediaPlayer.getDuration();
+                playButton.setImageResource(R.drawable.baseline_pause_24);
+                if (stateChangeListener != null) {
+                    stateChangeListener.onAudioStart();
+                }
+                PlaybackManager.getInstance().setActivePlayer(this); // Register this instance as active
+                updateSeekBar(seekBar);
+            });
+            mediaPlayer.setOnCompletionListener(mp -> stopAudio(seekBar, playButton));
+            mediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            Toast.makeText(context, "Failed to play audio: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    public void stopAudio(SeekBar seekBar, ImageButton playButton) {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+            playButton.setImageResource(R.drawable.baseline_play_arrow_24);
+            seekBar.setProgress(0);
+        }
+        if (stateChangeListener != null) {
+            stateChangeListener.onAudioStop();
+        }
+    }
+
+    private void setupSeekBarListener(SeekBar seekBar, ImageButton playButton) {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -96,75 +128,28 @@ public class AudioPlayerUtil {
                     mediaPlayer.seekTo(playPositionInMilliseconds);
                 }
                 if (progress >= 100) {
-                    audioPlayButton.setImageResource(R.drawable.baseline_play_arrow_24);
+                    playButton.setImageResource(R.drawable.baseline_play_arrow_24);
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
 
-    private void playAudio(String audioUrl, SeekBar seekBar, ImageButton playButton, Context context) {
-        if (audioUrl == null || audioUrl.isEmpty()) {
-            Toast.makeText(context, "Invalid audio URL", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            // Stop and reset if another audio is playing
-            if (mediaPlayer != null && mediaPlayer.isPlaying() && !audioUrl.equals(currentAudioUrl)) {
-                stopAudio(playButton, seekBar);
-            }
-
-            if (mediaPlayer == null) {
-                mediaPlayer = new MediaPlayer();
-                mediaPlayer.setOnCompletionListener(mp -> stopAudio(playButton, seekBar));
-            }
-
-            // Set the new data source if the URL has changed
-            if (!audioUrl.equals(currentAudioUrl)) {
-                mediaPlayer.reset();
-                mediaPlayer.setDataSource(audioUrl);
-                currentAudioUrl = audioUrl;
-                mediaPlayer.setOnPreparedListener(mp -> {
-                    mediaPlayer.start();
-                    duration = mediaPlayer.getDuration();
-                    playButton.setImageResource(R.drawable.baseline_pause_24);
-                    if (stateChangeListener != null) {
-                        stateChangeListener.onAudioStart();
-                    }
-                    updateSeekBar(seekBar);
-                });
-                mediaPlayer.prepareAsync();
-            } else {
-                // Resume playback for the same audio
-                mediaPlayer.start();
-                playButton.setImageResource(R.drawable.baseline_pause_24);
-                if (stateChangeListener != null) {
-                    stateChangeListener.onAudioStart();
-                }
-            }
-        } catch (IOException e) {
-            Toast.makeText(context, "Failed to play audio: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-    }
-
-    private void stopAudio(ImageButton playButton, SeekBar seekBar) {
-        if (mediaPlayer != null) {
-            mediaPlayer.pause();
-        }
+    private void configureUI(LinearLayout audioLayout, LinearLayout parentLayout, ImageButton playButton, SeekBar seekBar) {
+        // Set up layout parameters and add components
         playButton.setImageResource(R.drawable.baseline_play_arrow_24);
-        if (seekBar != null) seekBar.setProgress(0);
-        if (stateChangeListener != null) {
-            stateChangeListener.onAudioStop();
-        }
+        playButton.setBackground(null);
+        audioLayout.addView(playButton);
+
+        seekBar.setMax(100);
+        audioLayout.addView(seekBar);
+
+        parentLayout.addView(audioLayout);
     }
 
     private void updateSeekBar(SeekBar seekBar) {

@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 
 import androidx.annotation.OptIn;
 import androidx.core.content.ContextCompat;
@@ -257,9 +258,9 @@ public class MediaUtil {
             Log.e("MediaUtil", "Invalid audio URL.");
             return;
         }
-        AudioPlayerUtil audioPlayerUtil = AudioPlayerUtil.getInstance();
 
-        audioPlayerUtil.setOnAudioStateChangeListener(new AudioPlayerUtil.OnAudioStateChangeListener() {
+        // Create an instance of AudioPlayerUtil with a listener for state changes
+        AudioPlayerUtil audioPlayerUtil = new AudioPlayerUtil(new AudioPlayerUtil.OnAudioStateChangeListener() {
             @Override
             public void onAudioStart() {
                 Log.d("MediaUtil", "Audio playback started.");
