@@ -111,7 +111,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
             datePicker.show();
         });
 
-        // Sự kiện thay đổi văn bản trong EditText
         profileBirthdate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -188,7 +187,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         if (userAvatarUrl != null && !userAvatarUrl.isEmpty()) {
             Glide.with(this)
                     .load(userAvatarUrl)
-                    .placeholder(R.drawable.ic_default_profile_foreground)
+                    .placeholder(R.mipmap.ic_default_profile)
                     .into(imageProfile);
         }
 
@@ -258,9 +257,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
         // Kiểm tra userId đã được lấy đúng chưa
         if (userId == null || userId.isEmpty()) {
             Log.e("Firestore", "User ID is null or empty");
-            return; // Ngừng thực thi nếu userId rỗng
+            return;
         }
-        // Tạo một bản ghi mới chứa thông tin cập nhật
         Map<String, Object> updatedUser = new HashMap<>();
         if (!name.isEmpty()) {
             updatedUser.put("name", name);
@@ -281,16 +279,14 @@ public class UpdateProfileActivity extends AppCompatActivity {
         }
 
         if (imageUrl != "") {
-            updatedUser.put("image", imageUrl); // Cập nhật URL ảnh nếu có
+            updatedUser.put("image", imageUrl);
         }
         // Cập nhật thông tin người dùng trong Firestore
         userRef.update(updatedUser)
                 .addOnSuccessListener(aVoid -> {
-                    // Xử lý khi cập nhật thành công
                     Log.d("Firestore", "User profile updated successfully");
                     updateInfoUserToPreferenceManger(name, birthdate, imageUrl ,passwordNoHash,bg);
-
-                    finish(); // Đóng Activity hiện tại, trở về Activity trước đó
+                    finish();
                 })
                 .addOnFailureListener(e -> {
                     // Xử lý khi cập nhật thất bại
@@ -374,10 +370,12 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     private void loading(Boolean isLoading){
         if(isLoading){
+            btnBack.setVisibility(View.INVISIBLE);
             buttonUpdateProfile.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
         }
         else {
+            btnBack.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
             buttonUpdateProfile.setVisibility(View.VISIBLE);
         }

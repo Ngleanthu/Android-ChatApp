@@ -107,13 +107,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     //search algolia
     implementation("com.algolia:algoliasearch-android:3.27.0")
-
-
-
-    // Thư viện ExoPlayer cơ bản
-    implementation ("androidx.media3:media3-exoplayer:1.3.1")
-    implementation ("androidx.media3:media3-exoplayer-dash:1.3.1")
-    implementation ("androidx.media3:media3-ui:1.3.1")
 }
 
 

@@ -58,7 +58,7 @@ public class SearchUserRecyclerAdapter extends RecyclerView.Adapter<SearchUserRe
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Glide.with(context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.ic_default_profile_foreground) // Ảnh tạm
+                    .placeholder(R.mipmap.ic_default_profile) // Ảnh tạm
                     .into(holder.profilePic);
         }
 
