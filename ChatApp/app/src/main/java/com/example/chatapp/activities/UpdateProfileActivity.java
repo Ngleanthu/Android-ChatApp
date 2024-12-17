@@ -59,7 +59,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private TextView profileEmail;
     private TableRow confirmPasswordRow;
     private TableRow recentPasswordRow;
-
+    TextView errorRecentPW, errorConfirmPW, errorPW, errorDOB, errorName;
     private Uri imageUri;
     private String userId;
 
@@ -82,15 +82,18 @@ public class UpdateProfileActivity extends AppCompatActivity {
         imageProfile = findViewById(R.id.imageProfile);
         buttonUpdateProfile = findViewById(R.id.buttonUpdateProfile);
         progressBar = findViewById(R.id.progressBar);
-        profileEmail = findViewById(R.id.profileEmail);
         confirmPasswordRow = findViewById(R.id.confirmPasswordRow);
         recentPasswordRow = findViewById(R.id.recentPasswordRow);
+        errorName = findViewById(R.id.errorName);
+        errorDOB = findViewById(R.id.errorDOB);
+        errorPW = findViewById(R.id.errorPW);
+        errorConfirmPW = findViewById(R.id.errorConfirmPW);
+        errorRecentPW = findViewById(R.id.errorRecentPW);
 
         userId = preferenceManager.getString(Constants.KEY_USER_ID);
 
         getInfoUser();
         initListener();
-        profileEmail = findViewById(R.id.profileEmail);
         profileBirthdate.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -106,6 +109,19 @@ public class UpdateProfileActivity extends AppCompatActivity {
                     year, month, day
             );
             datePicker.show();
+        });
+
+        // Sự kiện thay đổi văn bản trong EditText
+        profileBirthdate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    String inputDate = profileBirthdate.getText().toString();
+                    if (!isValidDate(inputDate)) {
+                        Toast.makeText(UpdateProfileActivity.this, "Invalid Date Format", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
         });
 
 
@@ -168,14 +184,12 @@ public class UpdateProfileActivity extends AppCompatActivity {
         // Lấy dữ liệu từ PreferenceManager
         profileName.setText(preferenceManager.getString(Constants.KEY_NAME));
         profileBirthdate.setText(preferenceManager.getString(Constants.KEY_BIRTHDATE));
-        profileEmail.setText(preferenceManager.getString(Constants.KEY_EMAIL));
         String userAvatarUrl = preferenceManager.getString(Constants.KEY_IMAGE);
         if (userAvatarUrl != null && !userAvatarUrl.isEmpty()) {
-            // Thiết lập hình ảnh đại diện nếu có URL
             Glide.with(this)
                     .load(userAvatarUrl)
-                    .placeholder(R.drawable.ic_default_profile_foreground) // Hình ảnh placeholder khi đang tải ảnh
-                    .into(imageProfile); // ImageView để hiển thị ảnh
+                    .placeholder(R.drawable.ic_default_profile_foreground)
+                    .into(imageProfile);
         }
 
     }
@@ -183,7 +197,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private void initListener() {
         imageProfile.setOnClickListener(v-> fileHelper.selectFile("image"));
 
-        // Thiết lập sự kiện click cho nút Back
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,17 +229,12 @@ public class UpdateProfileActivity extends AppCompatActivity {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
 
-
-
-        // Kiểm tra giá trị của imageUri
         if (imageUri == null) {
             Log.e("Upload", "Image URI is null");
             return; // Ngừng thực hiện nếu imageUri là null
         } else {
             Log.d("Upload", "Image URI: " + imageUri.toString());
         }
-        // Đường dẫn cho file ảnh trong Firebase Storage
-//        StorageReference imageRef = storageReference.child("users/" + preferenceManager.getString(Constants.KEY_USER_ID) + "/profile.jpg");
         StorageReference imageRef = storageReference.child("users/" + preferenceManager.getString(Constants.KEY_USER_ID) + "/profile.jpg");
         // Tải ảnh từ imageUri lên Firebase Storage
         imageRef.putFile(imageUri)
@@ -310,39 +318,48 @@ public class UpdateProfileActivity extends AppCompatActivity {
         }
     }
 
-
-    private void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-
     private Boolean isValidProfileDetails() {
+        Boolean res = true;
         if (profileName.getText().toString().trim().isEmpty()) {
-            showToast("Enter name");
-            return false;
-        } else if (profileBirthdate.getText().toString().trim().isEmpty()) {
-            showToast("Enter birthdate");
-            return false;
-        } else if (!isValidBirthdate(profileBirthdate.getText().toString())) {
-            showToast("Enter valid birthdate in format dd/MM/yyyy");
-            return false;
-        } else if (!profileNewPassword.getText().toString().isEmpty()) {
+            errorName.setText("Enter name");
+            errorName.setVisibility(View.VISIBLE);
+            res =  false;
+        }
+        if (profileBirthdate.getText().toString().trim().isEmpty()) {
+            errorDOB.setText("Enter birthdate");
+            errorDOB.setVisibility(View.VISIBLE);
+            res =  false;
+        }
+        if (!isValidBirthdate(profileBirthdate.getText().toString())) {
+            errorDOB.setText("Enter valid birthdate in format dd/MM/yyyy");
+            errorDOB.setVisibility(View.VISIBLE);
+            res =  false;
+        }
+        if (!profileNewPassword.getText().toString().isEmpty()) {
             if (profileConfirmPassword.getText().toString().trim().isEmpty()) {
-                showToast("Enter confirm password");
-                return false;
-            } else if (profileRecentPassword.getText().toString().trim().isEmpty()) {
-                showToast("Enter your recent password");
-                return false;
-            } else if (!profileNewPassword.getText().toString().equals(profileConfirmPassword.getText().toString())) {
-                showToast("New password & confirm password must be same");
-                return false;
-            } else if (!profileRecentPassword.getText().toString().equals(preferenceManager.getString(Constants.KEY_PASSWORD))) {
-                showToast("Recent password is incorrect!");
-                return false;
+                errorConfirmPW.setText("Enter confirm password");
+                errorConfirmPW.setVisibility(View.VISIBLE);
+                res =  false;
+            }else if (!profileNewPassword.getText().toString().equals(profileConfirmPassword.getText().toString())) {
+                errorConfirmPW.setText("New password & confirm password\n must be same");
+                errorConfirmPW.setVisibility(View.VISIBLE);
+                res =  false;
+            }
+
+
+            if (profileRecentPassword.getText().toString().trim().isEmpty()) {
+                errorRecentPW.setText("Enter your recent password");
+                errorRecentPW.setVisibility(View.VISIBLE);
+                res =  false;
+            }  else if (!profileRecentPassword.getText().toString().equals(preferenceManager.getString(Constants.KEY_PASSWORD))) {
+                errorRecentPW.setText("Recent password is incorrect!");
+                errorRecentPW.setVisibility(View.VISIBLE);
+                res =  false;
             }
         }
-        return true;
+        return res;
     }
+
 
     private boolean isValidBirthdate(String birthdate) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -366,5 +383,28 @@ public class UpdateProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void  clearError(){
+        errorName.setText("");
+        errorName.setVisibility(View.GONE);
+        errorDOB.setText("");
+        errorDOB.setVisibility(View.GONE);
+        errorPW.setText("");
+        errorPW.setVisibility(View.GONE);
+        errorConfirmPW.setText("");
+        errorConfirmPW.setVisibility(View.GONE);
+        errorRecentPW.setText("");
+        errorRecentPW.setVisibility(View.GONE);
+    }
+
+    private boolean isValidDate(String date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            sdf.setLenient(false);
+            sdf.parse(date);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
 

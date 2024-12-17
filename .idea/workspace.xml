@@ -2,58 +2,10 @@
 <project version="4">
   <component name="AndroidLayouts">
     <shared>
-      <config>
-        <device id="pixel_4a" />
-        <device id="pixel_3" />
-      </config>
+      <config />
     </shared>
     <layouts>
-      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activitty_chat.xml">
-        <config>
-          <theme>@style/Theme.ChatApp</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_forgot_password.xml">
-        <config>
-          <theme>@style/Theme.ChatApp</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_main.xml">
-        <config>
-          <theme>@style/Theme.ChatApp</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_sign_in.xml">
-        <config>
-          <theme>@style/Theme.ChatApp</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_sign_up.xml">
-        <config>
-          <theme>@style/Theme.ChatApp</theme>
-        </config>
-      </layout>
       <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_update_profile.xml">
-        <config>
-          <theme>@style/Theme.ChatApp</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/chat_message_recycler_row.xml">
-        <config>
-          <theme>@style/Theme.ChatApp</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/recent_chat_recycler_row.xml">
-        <config>
-          <theme>@style/Theme.ChatApp</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/search_user.xml">
-        <config>
-          <theme>@style/Theme.ChatApp</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/ChatApp/app/src/main/res/layout/search_user_recycle_row.xml">
         <config>
           <theme>@style/Theme.ChatApp</theme>
         </config>
@@ -64,10 +16,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a36e8fe-e4dd-4452-a523-bfe84d12eaa0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="a5a90e11-821f-4b36-a61a-f945330b2a98" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/SignInActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/SignInActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/SignUpActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/SignUpActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/UpdateProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/UpdateProfileActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_update_profile.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/res/layout/activity_update_profile.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,7 +32,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\thao4\.android\avd\Medium_Phone_API_29.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\MSI GF63\.android\avd\Medium_Phone_API_35_2.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/ChatApp">
       <ProjectState />
@@ -121,70 +76,32 @@
       </state>
     </system>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="main" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Phoegras&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Ngleanthu/Android-ChatApp.git&quot;,
-    &quot;accountId&quot;: &quot;ff201a32-c9e5-47a0-8d49-a82951e12d6d&quot;
-  }
-}</component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 0
-}</component>
-  <component name="ProjectId" id="2nNebytuZtIa6TTkTyXbXcrAuMM" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="2qJDHqY02Y6HsYOLZlAS6vkUKbE" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Android App.ChatApp.app.executor": "Run",
+    "Android App.app.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/Dai hoc/BaiTap/Mobile-dev/Android-ChatApp",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.keymap"
+    "last_opened_file_path": "D:/Mobile/DoAn_1712/Android-ChatApp"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="android.template.-596043369">
-      <recent name="com.example.chatapp" />
-    </key>
-  </component>
   <component name="RunManager">
-    <configuration name="ChatApp.app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="ChatApp.app.main" />
       <option name="DEPLOY" value="true" />
       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
@@ -254,23 +171,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="2a36e8fe-e4dd-4452-a523-bfe84d12eaa0" name="Changes" comment="" />
-      <created>1728818035479</created>
+      <changelist id="a5a90e11-821f-4b36-a61a-f945330b2a98" name="Changes" comment="" />
+      <created>1734371699970</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1728818035479</updated>
+      <updated>1734371699970</updated>
     </task>
     <servers />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
 </project>
