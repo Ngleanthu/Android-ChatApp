@@ -75,5 +75,16 @@
     android:padding="10dp"
     android:id="@+id/search_user_recycler_view"
         />
-
+    <TextView
+        android:id="@+id/empty_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="1dp"
+        android:text="User name not found"
+        android:textSize="18sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_below="@id/search_user_layout"
+        android:visibility="gone"
+        />
 </RelativeLayout>

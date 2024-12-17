@@ -2,13 +2,10 @@ package com.example.chatapp.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.chatapp.models.UserModel;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AndroidUtil {
     public static void passUserModelAsIntent(Intent intent, UserModel userModel){
@@ -28,6 +25,14 @@ public class AndroidUtil {
 
     return userModel;
     }
+    public static boolean containsLink(String message) {
+        String urlRegex = "((http|https)://|www\\.)[a-zA-Z0-9\\-._~:/?#\\\\@!$&'()*+,;=]+";
+        Pattern pattern = Pattern.compile(urlRegex);
+        Matcher matcher = pattern.matcher(message);
+        return matcher.find();
+    }
+
+
 
 
 }

@@ -105,6 +105,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    //search algolia
+    implementation("com.algolia:algoliasearch-android:3.27.0")
 
 
 
