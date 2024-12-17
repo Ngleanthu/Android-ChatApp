@@ -72,10 +72,7 @@ public class FileHelper {
                     // For general files (documents, etc.), fallback to older permissions
                     return true;
             }
-        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            // For Android versions below 13
-            return true;
-        } else{
+        }else{
             return ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED;
         }

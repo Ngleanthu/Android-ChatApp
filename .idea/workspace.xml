@@ -18,10 +18,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a5a90e11-821f-4b36-a61a-f945330b2a98" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/activities/ChatActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/ChatRecyclerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/adapter/ChatRecyclerAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/FileHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/FileHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/MediaUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/ChatApp/app/src/main/java/com/example/chatapp/utils/MediaUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +110,7 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "audioSentVer2",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/Mobile/DoAn_1712/Android-ChatApp"
   }
