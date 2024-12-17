@@ -13,9 +13,10 @@ import java.io.IOException;
 
 public class AudioPlayerUtil {
 
+    private static AudioPlayerUtil instance;
     private MediaPlayer mediaPlayer;
-    private boolean isPlaying = false;
     private int duration;
+    private String currentAudioUrl;
 
     public interface OnAudioStateChangeListener {
         void onAudioStart();
@@ -24,8 +25,18 @@ public class AudioPlayerUtil {
 
     private OnAudioStateChangeListener stateChangeListener;
 
-    public AudioPlayerUtil(OnAudioStateChangeListener stateChangeListener) {
-        this.stateChangeListener = stateChangeListener;
+    public void setOnAudioStateChangeListener(OnAudioStateChangeListener listener) {
+        this.stateChangeListener = listener;
+    }
+    // Private constructor to enforce Singleton
+    private AudioPlayerUtil() {}
+
+    // Get Singleton instance
+    public static synchronized AudioPlayerUtil getInstance() {
+        if (instance == null) {
+            instance = new AudioPlayerUtil();
+        }
+        return instance;
     }
 
     public void addAudioPlayerToLayout(LinearLayout parentLayout, String audioUrl, Context context) {
@@ -69,7 +80,7 @@ public class AudioPlayerUtil {
 
         // Handle play/pause button click
         audioPlayButton.setOnClickListener(v -> {
-            if (isPlaying) {
+            if (mediaPlayer != null && mediaPlayer.isPlaying() && currentAudioUrl != null && currentAudioUrl.equals(audioUrl)) {
                 stopAudio(audioPlayButton, seekBar);
             } else {
                 playAudio(audioUrl, seekBar, audioPlayButton, context);
@@ -86,7 +97,6 @@ public class AudioPlayerUtil {
                 }
                 if (progress >= 100) {
                     audioPlayButton.setImageResource(R.drawable.baseline_play_arrow_24);
-                    isPlaying = false;
                 }
             }
 
@@ -107,12 +117,23 @@ public class AudioPlayerUtil {
         }
 
         try {
+            // Stop and reset if another audio is playing
+            if (mediaPlayer != null && mediaPlayer.isPlaying() && !audioUrl.equals(currentAudioUrl)) {
+                stopAudio(playButton, seekBar);
+            }
+
             if (mediaPlayer == null) {
                 mediaPlayer = new MediaPlayer();
+                mediaPlayer.setOnCompletionListener(mp -> stopAudio(playButton, seekBar));
+            }
+
+            // Set the new data source if the URL has changed
+            if (!audioUrl.equals(currentAudioUrl)) {
+                mediaPlayer.reset();
                 mediaPlayer.setDataSource(audioUrl);
+                currentAudioUrl = audioUrl;
                 mediaPlayer.setOnPreparedListener(mp -> {
                     mediaPlayer.start();
-                    isPlaying = true;
                     duration = mediaPlayer.getDuration();
                     playButton.setImageResource(R.drawable.baseline_pause_24);
                     if (stateChangeListener != null) {
@@ -120,8 +141,14 @@ public class AudioPlayerUtil {
                     }
                     updateSeekBar(seekBar);
                 });
-                mediaPlayer.setOnCompletionListener(mp -> stopAudio(playButton, seekBar));
                 mediaPlayer.prepareAsync();
+            } else {
+                // Resume playback for the same audio
+                mediaPlayer.start();
+                playButton.setImageResource(R.drawable.baseline_pause_24);
+                if (stateChangeListener != null) {
+                    stateChangeListener.onAudioStart();
+                }
             }
         } catch (IOException e) {
             Toast.makeText(context, "Failed to play audio: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -131,13 +158,10 @@ public class AudioPlayerUtil {
 
     private void stopAudio(ImageButton playButton, SeekBar seekBar) {
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
+            mediaPlayer.pause();
         }
-        isPlaying = false;
         playButton.setImageResource(R.drawable.baseline_play_arrow_24);
-        seekBar.setProgress(0);
+        if (seekBar != null) seekBar.setProgress(0);
         if (stateChangeListener != null) {
             stateChangeListener.onAudioStop();
         }
@@ -145,7 +169,7 @@ public class AudioPlayerUtil {
 
     private void updateSeekBar(SeekBar seekBar) {
         new Thread(() -> {
-            while (mediaPlayer != null && isPlaying) {
+            while (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 try {
                     if (seekBar != null) {
                         seekBar.setProgress((int) (((float) mediaPlayer.getCurrentPosition() / duration) * 100));

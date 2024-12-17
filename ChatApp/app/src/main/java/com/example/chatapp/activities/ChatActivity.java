@@ -422,7 +422,7 @@ public class ChatActivity extends AppCompatActivity   {
 
                     if (querySnapshot != null && !querySnapshot.isEmpty()) {
                         // Update UI when seen status changed or new messages arrive
-                        adapter.notifyDataSetChanged();
+                        adapter.notifyItemChanged(1);
 
                         // Scroll screen automatically to the latest message
                         recyclerView.scrollToPosition(0);
